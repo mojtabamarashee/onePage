@@ -20,12 +20,10 @@ class Main extends React.Component {
 	};
 
 	render() {
-		let out =
-			this.state.mode == 'table' ? (
-				<Table ChangeMode={this.ChangeMode} />
-			) : (
-				<Settings ChangeMode={this.ChangeMode} />
-			);
+		let styleSettings, styleTable;
+		let out = this.state.mode == 'table' ? 
+					<Table ChangeMode={this.ChangeMode} /> :
+					<Settings ChangeMode={this.ChangeMode} />
 		return out;
 	}
 }
