@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Settings} from './Setting.jsx';
 import {Table} from './Table.jsx';
+import {App2} from './Test.js';
 
 class Main extends React.Component {
 	constructor(props) {
@@ -21,9 +22,7 @@ class Main extends React.Component {
 
 	render() {
 		let styleSettings, styleTable;
-		let out = this.state.mode == 'table' ? 
-					<Table ChangeMode={this.ChangeMode} /> :
-					<Settings ChangeMode={this.ChangeMode} />
+		let out = this.state.mode == 'table' ? <App2 /> : <Settings ChangeMode={this.ChangeMode} />;
 		return out;
 	}
 }
