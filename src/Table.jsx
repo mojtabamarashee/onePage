@@ -78,6 +78,7 @@ class Table extends React.Component {
 								<td>pe</td>
 								<td>SPe</td>
 								<td>tgh</td>
+								<td>RSI</td>
 								<td>Q</td>
 								<td>MM</td>
 								<td>f</td>
@@ -104,6 +105,7 @@ class Table extends React.Component {
 												(v.plp >= 0 ? (color = 'green') : (color = 'red'),
 												<td style={{color: color}}>{v.plp}</td>)
 											}
+											<td>{v.rsi}</td>
 											{
 												((num =
 													Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0

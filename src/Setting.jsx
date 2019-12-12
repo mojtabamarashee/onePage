@@ -18,27 +18,54 @@ class Settings extends React.Component {
 
 	PESmallerThanSec = () => e => {
 		//tableThis.setState({PESmallerThanSecFlag: e.target.checked}, () => console.log('state = ', tableThis.state));
-		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+		var Func = function(settings, data, dataIndex) {
 			var pe = parseFloat(data[1]) || 0;
 			var secPe = parseFloat(data[2]) || 0;
 			if (pe < secPe) {
 				return true;
 			}
 			return false;
-		});
+		};
+
+		if (e.target.checked) {
+			$.fn.dataTable.ext.search.push(Func);
+		} else {
+			$.fn.dataTable.ext.search.splice($.fn.dataTable.ext.search.indexOf(Func, 1));
+		}
 	};
 
 	PESmallerThanHalfSec = () => e => {
-		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+		var Func = function(settings, data, dataIndex) {
 			var pe = parseFloat(data[1]) || 0;
 			var secPe = parseFloat(data[2]) || 0;
 			if (pe < 0.5 * secPe) {
 				return true;
 			}
 			return false;
-		});
+		};
+
+		if (e.target.checked) {
+			$.fn.dataTable.ext.search.push(Func);
+		} else {
+			$.fn.dataTable.ext.search.splice($.fn.dataTable.ext.search.indexOf(Func, 1));
+		}
 	};
 
+	RsiLessThan = () => e => {
+		var Func = function(settings, data, dataIndex) {
+			var rsi = parseFloat(data[4]) || 0;
+			if (rsi < 45) {
+				return true;
+			}
+			return false;
+		};
+
+		if (e.target.checked) {
+			$.fn.dataTable.ext.search.push(Func);
+		} else {
+			$.fn.dataTable.ext.search.splice($.fn.dataTable.ext.search.indexOf(Func, 1));
+		}
+	};
 	render() {
 		return (
 			<div style={{margin: '5px'}}>
@@ -92,6 +119,21 @@ class Settings extends React.Component {
 						/>
 					}
 					label="P/E < 0.5 * SecPE"
+				/>
+				<br />
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={null}
+							onChange={this.RsiLessThan()}
+							value="gilad"
+							inputProps={{
+								'aria-label': 'secondary checkbox',
+							}}
+							color="primary"
+						/>
+					}
+					label="RSI < 45"
 				/>
 			</div>
 		);
