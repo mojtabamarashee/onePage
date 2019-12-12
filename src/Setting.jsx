@@ -7,13 +7,19 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {curRows, tableThis, table} from './Table.jsx';
 class Settings extends React.Component {
 	PEPos = () => e => {
-		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+		var Fucn = function(settings, data, dataIndex) {
 			var pe = parseFloat(data[1]) || 0;
 			if (pe > 0) {
 				return true;
 			}
 			return false;
-		});
+		};
+
+		if (e.target.checked) {
+			$.fn.dataTable.ext.search.push(Func);
+		} else {
+			$.fn.dataTable.ext.search.splice($.fn.dataTable.ext.search.indexOf(Func, 1));
+		}
 	};
 
 	PESmallerThanSec = () => e => {
