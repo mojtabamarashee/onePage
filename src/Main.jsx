@@ -22,8 +22,7 @@ class Main extends React.Component {
 
 	render() {
 		let styleSettings, styleTable;
-		let out = this.state.mode == 'table' ? <App2 /> : <Settings ChangeMode={this.ChangeMode} />;
-		return out;
+		return <App2/>;
 	}
 }
 export {Main};

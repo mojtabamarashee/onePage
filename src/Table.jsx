@@ -22,7 +22,7 @@ class Table extends React.Component {
 		var numeral = require('numeral');
 		$('#table').DataTable({
 			order: [[1, 'desc']],
-			pageLength: 100,
+			pageLength: 15,
 			scrollX: true,
 			fixedColumns: {
 				leftColumns: 1,
