@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCog} from '@fortawesome/free-solid-svg-icons';
 let curRows = allRows,
-	tableThis;
+	tableThis, table;
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
 class Table extends React.Component {
@@ -20,9 +20,9 @@ class Table extends React.Component {
 	componentDidMount() {
 		curRows = allRows;
 		var numeral = require('numeral');
-		$('#table').DataTable({
+		table = $('#table').DataTable({
 			order: [[1, 'desc']],
-			pageLength: 100,
+			pageLength: 10,
 			scrollX: true,
 			fixedColumns: {
 				leftColumns: 1,
@@ -39,7 +39,7 @@ class Table extends React.Component {
 	};
 
 	shouldComponentUpdate(nextProps, nextState) {
-		return true;
+		return false;
 	}
 
 	GetCurRows = () => {
@@ -174,4 +174,4 @@ class Table extends React.Component {
 	}
 }
 
-export {Table, curRows, tableThis};
+export {Table, curRows, tableThis, table};

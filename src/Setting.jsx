@@ -4,14 +4,39 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import {curRows, tableThis} from './Table.jsx';
+import {curRows, tableThis, table} from './Table.jsx';
 class Settings extends React.Component {
 	PEPos = () => e => {
-		tableThis.setState({PEPosFlag: e.target.checked}, () => console.log('state = ', tableThis.state));
+		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			var pe = parseFloat(data[1]) || 0;
+			if (pe > 0) {
+				return true;
+			}
+			return false;
+		});
 	};
 
 	PESmallerThanSec = () => e => {
-		tableThis.setState({PESmallerThanSecFlag: e.target.checked}, () => console.log('state = ', tableThis.state));
+		//tableThis.setState({PESmallerThanSecFlag: e.target.checked}, () => console.log('state = ', tableThis.state));
+		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			var pe = parseFloat(data[1]) || 0;
+			var secPe = parseFloat(data[2]) || 0;
+			if (pe < secPe) {
+				return true;
+			}
+			return false;
+		});
+	};
+
+	PESmallerThanHalfSec = () => e => {
+		$.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+			var pe = parseFloat(data[1]) || 0;
+			var secPe = parseFloat(data[2]) || 0;
+			if (pe < 0.5 * secPe) {
+				return true;
+			}
+			return false;
+		});
 	};
 
 	render() {
@@ -52,6 +77,21 @@ class Settings extends React.Component {
 						/>
 					}
 					label="P/E < SecPE"
+				/>
+				<br />
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={null}
+							onChange={this.PESmallerThanHalfSec()}
+							value="gilad"
+							inputProps={{
+								'aria-label': 'secondary checkbox',
+							}}
+							color="primary"
+						/>
+					}
+					label="P/E < 0.5 * SecPE"
 				/>
 			</div>
 		);

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Settings} from './Setting.jsx';
-import {Table} from './Table.jsx';
+import {Table, table} from './Table.jsx';
 
 class Main extends React.Component {
 	constructor(props) {
@@ -15,16 +15,27 @@ class Main extends React.Component {
 		if (mode == 'table') {
 			this.setState({mode: 'settings'});
 		} else {
-			this.setState({mode: 'table'});
+			this.setState({mode: 'table'}, ()=>table.draw());
 		}
 	};
 
 	render() {
-		let styleSettings, styleT
-		let out = this.state.mode == 'table' ? 
-					<Table ChangeMode={this.ChangeMode} /> :
+		let styleSettings, styleT, out, settingStyle, tableStyle;
+		console.log('mode = ', this.state.mode);
+		if (table) table.draw();
+		this.state.mode == 'table'
+			? ((settingStyle = {display: 'none'}), (tableStyle = {display: 'block'}))
+			: ((tableStyle = {display: 'none'}), (settingStyle = {display: 'block'}));
+		return (
+			<div>
+				<div style={tableStyle}>
+					<Table ChangeMode={this.ChangeMode} />
+				</div>
+				<div style={settingStyle}>
 					<Settings ChangeMode={this.ChangeMode} />
-		return out;
+				</div>
+			</div>
+		);
 	}
 }
 export {Main};
