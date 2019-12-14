@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCog} from '@fortawesome/free-solid-svg-icons';
 let curRows = allRows,
-	tableThis, table;
+	tableThis,
+	table;
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
 class Table extends React.Component {
@@ -29,7 +30,7 @@ class Table extends React.Component {
 				rightColumns: 0,
 			},
 		});
-        curRows = [];
+		curRows = [];
 	}
 
 	componentWillUnmount() {}
@@ -170,6 +171,15 @@ class Table extends React.Component {
 							)}
 						</tbody>
 					</table>
+					<br />
+					<br />
+					<div style={{textAlign: 'center'}}>
+						<span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+							دانلود شده از
+							<a href="https://telegram.me/filtermarket1"> کانال تلگرام</a>
+						</span>
+						<br />
+					</div>
 				</div>
 			</div>
 		);

@@ -5,6 +5,66 @@ import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {curRows, tableThis, table} from './Table.jsx';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+let gFunc;
+let selectedCs = 0;
+
+let cs = [
+	0,
+	1,
+	10,
+	11,
+	13,
+	14,
+	17,
+	19,
+	20,
+	21,
+	22,
+	23,
+	25,
+	26,
+	27,
+	28,
+	29,
+	31,
+	32,
+	34,
+	38,
+	39,
+	40,
+	42,
+	43,
+	44,
+	45,
+	46,
+	47,
+	49,
+	50,
+	53,
+	54,
+	55,
+	56,
+	57,
+	58,
+	59,
+	60,
+	61,
+	64,
+	65,
+	66,
+	67,
+	68,
+	69,
+	70,
+	71,
+	72,
+	73,
+	74,
+	90,
+];
+
 class Settings extends React.Component {
 	PEPos = () => e => {
 		var Func = function(settings, data, dataIndex) {
@@ -72,6 +132,24 @@ class Settings extends React.Component {
 			$.fn.dataTable.ext.search.splice($.fn.dataTable.ext.search.indexOf(Func, 1));
 		}
 	};
+
+	CsSelected = e => {
+		selectedCs = e.target.value;
+		if (gFunc) $.fn.dataTable.ext.search.splice($.fn.dataTable.ext.search.indexOf(gFunc, 1));
+		gFunc = function(settings, data, dataIndex) {
+			var row = allRows.find(v => v.l18 == data[0]);
+			if (row) {
+				let css = row.cs;
+				if (css == e.target.value) {
+					return true;
+				}
+			}
+			return false;
+		};
+
+		if (selectedCs != 0) $.fn.dataTable.ext.search.push(gFunc);
+	};
+
 	render() {
 		return (
 			<div style={{margin: '5px'}}>
@@ -141,6 +219,21 @@ class Settings extends React.Component {
 					}
 					label="RSI < 45"
 				/>
+				<br />
+				<br />
+				<TextField
+					select
+					label="Select"
+					id="filled-select-currency"
+					onChange={this.CsSelected}
+					helperText="Please select cs"
+					variant="filled">
+					{cs.map(value => (
+						<MenuItem key={value} value={value}>
+							{value}
+						</MenuItem>
+					))}
+				</TextField>
 			</div>
 		);
 	}
