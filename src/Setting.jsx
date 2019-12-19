@@ -8,7 +8,7 @@ import {curRows, tableThis, table} from './Table.jsx';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 let gFunc;
-let selectedCs = 0;
+let selectedCs = 'none';
 
 let cs = [
 	0,
@@ -48,7 +48,6 @@ let cs = [
 	56,
 	57,
 	58,
-	59,
 	60,
 	61,
 	64,
@@ -61,9 +60,15 @@ let cs = [
 	71,
 	72,
 	73,
-	74,
 	90,
 ];
+cs.forEach((v1, i1) => {
+	let t = allRows.find((v, i) => v.l18.match(/^([^0-9]*)$/) && v.cs == v1);
+	if (!t) {
+		cs = cs.filter((v, i) => v != v1);
+	}
+});
+cs.unshift('none');
 
 class Settings extends React.Component {
 	PEPos = () => e => {
@@ -137,7 +142,7 @@ class Settings extends React.Component {
 		selectedCs = e.target.value;
 		if (gFunc) $.fn.dataTable.ext.search.splice($.fn.dataTable.ext.search.indexOf(gFunc, 1));
 		gFunc = function(settings, data, dataIndex) {
-			var row = allRows.find(v => v.l18 == data[0]);
+			var row = allRows.find(v => v.name == data[0]);
 			if (row) {
 				let css = row.cs;
 				if (css == e.target.value) {
@@ -147,7 +152,7 @@ class Settings extends React.Component {
 			return false;
 		};
 
-		if (selectedCs != 0) $.fn.dataTable.ext.search.push(gFunc);
+		if (selectedCs != 'none') $.fn.dataTable.ext.search.push(gFunc);
 	};
 
 	render() {
@@ -230,7 +235,10 @@ class Settings extends React.Component {
 					variant="filled">
 					{cs.map(value => (
 						<MenuItem key={value} value={value}>
-							{value}
+							{value.toString() +
+								' (' +
+								allRows.filter((v, i) => v.l18.match(/^([^0-9]*)$/)).filter(v => v.cs == value).length + ")"
+                            }
 						</MenuItem>
 					))}
 				</TextField>

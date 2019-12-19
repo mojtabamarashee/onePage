@@ -3,6 +3,7 @@ import './table.css';
 import ReactDOM from 'react-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCog} from '@fortawesome/free-solid-svg-icons';
+import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 let curRows = allRows,
 	tableThis,
 	table;
@@ -56,11 +57,11 @@ class Table extends React.Component {
 	};
 
 	render() {
-		let max;
-		let mm;
+		let max, coef, sumAll;
+		let mm, t1, t2;
 		const yellowColor = {color: 'yellow'};
 		const blackColor = {color: 'black'};
-		let stylee, bgColor, color, num;
+		let stylee, bgColor, color, num, secAvg;
 		this.GetCurRows();
 		return (
 			<div style={{margin: '5px'}}>
@@ -68,6 +69,13 @@ class Table extends React.Component {
 					style={{margin: '0 0 5px 0'}}
 					onClick={() => this.props.ChangeMode('table')}
 					icon={faCog}
+					size="3x"
+					color="lightBlue"
+				/>
+				<FontAwesomeIcon
+					style={{margin: '0 0 5px 0', float: 'right'}}
+					onClick={null}
+					icon={faQuestionCircle}
 					size="3x"
 					color="lightBlue"
 				/>
@@ -79,6 +87,9 @@ class Table extends React.Component {
 								<td>pe</td>
 								<td>SPe</td>
 								<td>tgh</td>
+								<td>م.ت.گ</td>
+								<td>v</td>
+								<td>bs</td>
 								<td>RSI</td>
 								<td>Q</td>
 								<td>MM</td>
@@ -89,12 +100,15 @@ class Table extends React.Component {
 								<td>10d</td>
 								<td>30d</td>
 								<td>60d</td>
+								<td>حv</td>
+								<td>حn</td>
+								<td>cs</td>
 								<td>س</td>
 								<td>t</td>
 							</tr>
 						</thead>
 						<tbody>
-							{curRows.filter((v, i) => v.l18.match(/^([^0-9]*)$/)).map(
+							{allRows.filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/)).map(
 								(v, i) => (
 									(stylee = {color: v.color}),
 									(
@@ -106,6 +120,31 @@ class Table extends React.Component {
 												(v.plp >= 0 ? (color = 'green') : (color = 'red'),
 												<td style={{color: color}}>{v.plp}</td>)
 											}
+											{
+												((num = allRows
+													.filter((v3, i) => v3.l18.match(/^([^0-9]*)$/))
+													.filter(v1 => v1.cs == v.cs)),
+												(secAvg =
+													num.reduce((a, c) => {
+														c.flow == 4 ? (coef = 5 / 3) : (coef = 1);
+														return a + c.plp * coef;
+													}, 0) / num.length),
+												secAvg >= 0 ? (color = 'green') : (color = 'red'),
+												(
+													<td data-sort={secAvg} style={{color: color}}>
+														{numeral(secAvg).format() + ' (' + num.length + ')'}
+													</td>
+												))
+											}
+
+											<td data-sort={v.tvol}>
+												{numeral(v.tvol)
+													.format('0a')
+													.toUpperCase()}
+											</td>
+											<td>
+												{numeral((v.ct.Buy_CountI / v.ct.Buy_I_Volume) / (v.ct.Sell_CountI / v.ct.Sell_I_Volume)).format()}
+											</td>
 											<td>{v.rsi}</td>
 											{
 												((num =
@@ -128,7 +167,7 @@ class Table extends React.Component {
 												<td bgcolor={bgColor}> {v.mm} </td>)
 											}
 											<td style={stylee}>{v.flow}</td>
-											<td>
+											<td data-sort={v.totalVol}>
 												{numeral(v.totalVol)
 													.format('0a')
 													.toUpperCase()}
@@ -139,6 +178,19 @@ class Table extends React.Component {
 											<td>{v.d10}</td>
 											<td>{v.d30}</td>
 											<td>{v.d60}</td>
+											<td data-sort={v.ct.Buy_N_Volume}>
+												{numeral(v.ct.Buy_N_Volume)
+													.format('0a')
+													.toString()
+													.toUpperCase()}
+											</td>
+											<td data-sort={v.ct.Buy_CountN}>
+												{numeral(v.ct.Buy_CountN)
+													.format('0a')
+													.toString()
+													.toUpperCase()}
+											</td>
+											<td>{v.cs}</td>
 
 											<td>
 												<a href={'https://www.sahamyab.com/hashtag/' + v.name + '/post'}>
