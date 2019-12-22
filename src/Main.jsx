@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Settings} from './Setting.jsx';
+import {Settings, filters} from './Setting.jsx';
 import {Table, table} from './Table.jsx';
 
 class Main extends React.Component {
@@ -15,7 +15,8 @@ class Main extends React.Component {
 		if (mode == 'table') {
 			this.setState({mode: 'settings'});
 		} else {
-			this.setState({mode: 'table'}, ()=>table.draw());
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map((v => v.func));
+			this.setState({mode: 'table'}, () => table.draw());
 		}
 	};
 

@@ -84,6 +84,7 @@ class Table extends React.Component {
 						<thead>
 							<tr className="success">
 								<td>name</td>
+								<td>ق.پ</td>
 								<td>pe</td>
 								<td>SPe</td>
 								<td>tgh</td>
@@ -114,11 +115,12 @@ class Table extends React.Component {
 									(
 										<tr key={v.l30}>
 											<td>{v.name}</td>
+											<td>{v.pc}</td>
 											<td>{v.pe}</td>
 											<td>{v.sectorPE}</td>
 											{
-												(v.plp >= 0 ? (color = 'green') : (color = 'red'),
-												<td style={{color: color}}>{v.plp}</td>)
+												(v.pcp >= 0 ? (color = 'green') : (color = 'red'),
+												<td style={{color: color}}>{v.pcp}</td>)
 											}
 											{
 												((num = allRows
@@ -127,7 +129,7 @@ class Table extends React.Component {
 												(secAvg =
 													num.reduce((a, c) => {
 														c.flow == 4 ? (coef = 5 / 3) : (coef = 1);
-														return a + c.plp * coef;
+														return a + c.pcp * coef;
 													}, 0) / num.length),
 												secAvg >= 0 ? (color = 'green') : (color = 'red'),
 												(
@@ -143,7 +145,7 @@ class Table extends React.Component {
 													.toUpperCase()}
 											</td>
 											<td>
-												{numeral((v.ct.Buy_CountI / v.ct.Buy_I_Volume) / (v.ct.Sell_CountI / v.ct.Sell_I_Volume)).format()}
+												{numeral((v.ct.Sell_CountI / v.ct.Sell_I_Volume) / (v.ct.Buy_CountI / v.ct.Buy_I_Volume)).format()}
 											</td>
 											<td>{v.rsi}</td>
 											{
