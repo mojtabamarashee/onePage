@@ -51,6 +51,7 @@ let cs = [
 	73,
 	90,
 ];
+
 cs.forEach((v1, i1) => {
 	let t = allRows.find((v, i) => v.l18.match(/^([^0-9]*)$/) && v.cs == v1);
 	if (!t) {
