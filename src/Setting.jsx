@@ -6,6 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {curRows, tableThis, table} from './Table.jsx';
 import {cs} from './CS.js';
+import {csName, csNameOrig} from './CsName.js';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Box from '@material-ui/core/Box';
@@ -70,7 +71,7 @@ filters.push({
 	func: (settings, data, dataIndex) => {
 		var row = allRows.find(v => v.name == data[0]);
 		if (row) {
-			let css = row.cs;
+			let css = row.csName;
 			if (css == selectedCs) {
 				return true;
 			}
@@ -133,7 +134,7 @@ class Settings extends React.Component {
 
 	CsSelected = e => {
 		selectedCs = e.target.value;
-        console.log("selectedCs = ", selectedCs);
+		console.log('selectedCs = ', selectedCs);
 		if (selectedCs != 'none') {
 			filters.find(v => v.name == 'CsSelected').exist = 1;
 		} else {
@@ -237,11 +238,16 @@ class Settings extends React.Component {
 					onChange={this.CsSelected}
 					helperText="Please select cs"
 					variant="filled">
-					{cs.map(value => (
-						<MenuItem key={value} value={value}>
+					{csName.map((value, i) => (
+						<MenuItem
+							key={value}
+							value={csNameOrig[i]}
+							style={{fontFamily: 'Courier New, Courier, monospace'}}>
 							{value.toString() +
 								' (' +
-								allRows.filter((v, i) => v.l18.match(/^([^0-9]*)$/)).filter(v => v.cs == value).length +
+								allRows
+									.filter((v, i) => v.l18.match(/^([^0-9]*)$/))
+									.filter(v => v.csName == csNameOrig[i]).length +
 								')'}
 						</MenuItem>
 					))}
