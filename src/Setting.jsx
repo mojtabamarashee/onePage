@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import {curRows, tableThis, table} from './Table.jsx';
+import {curRows, tableThis, table, columns} from './Table.jsx';
 import {cs} from './CS.js';
 import {csName, csNameOrig} from './CsName.js';
 import TextField from '@material-ui/core/TextField';
@@ -14,6 +14,19 @@ import Button from '@material-ui/core/Button';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
+
+filters.push({
+	exist: 0,
+	name: 'PayaniPos',
+
+	func: (settings, data, dataIndex) => {
+		var pe = parseFloat(data[2]) || 0;
+		if (pe > 0) {
+			return true;
+		}
+		return false;
+	},
+});
 
 filters.push({
 	exist: 0,
@@ -80,6 +93,22 @@ filters.push({
 	},
 });
 
+
+filters.push({
+	exist: 0,
+	name: 'KafeGheymat',
+	func: (settings, data, dataIndex) => {
+		var row = allRows.filter((v, i)=> i < KafeGheymat).find(v => (v.pc <= Math.min.apply(null, v.hist.map((v, i) => v.PClosing))));
+		if (row) {
+			let css = row.csName;
+			if (css == kafeGheymat) {
+				return true;
+			}
+		}
+		return false;
+	},
+});
+
 filters.push({
 	exist: 0,
 	name: 'PriceLimit',
@@ -99,6 +128,27 @@ class Settings extends React.Component {
 			priceFilterEn: 0,
 		};
 	}
+
+	GetColumnIndex = name => {
+		let index = table.columns().map((v, i) => {
+			let columnss = table.settings().init().columns[0];
+			console.log('columnss = ', columnss);
+			if (columns[index].name == name) {
+				console.log('name = ', name);
+				console.log('i = ', i);
+				return i;
+			}
+		});
+		return index;
+	};
+
+	PayaniPos = () => e => {
+		if (e.target.checked) {
+			filters.find(v => v.name == 'PEPos').exist = 1;
+		} else {
+			filters.find(v => v.name == 'PEPos').exist = 0;
+		}
+	};
 
 	PEPos = () => e => {
 		if (e.target.checked) {
@@ -142,6 +192,15 @@ class Settings extends React.Component {
 		}
 	};
 
+    KafeGheymatChanged = e =>{
+		kafeGheymat = e.target.value;
+		if (selectedCs != 'none') {
+			filters.find(v => v.name == 'kafeGheymat').exist = 1;
+		} else {
+			filters.find(v => v.name == 'kafeGheymat').exist = 0;
+		}
+    }
+
 	PriceEn = e => {
 		if (e.target.checked) {
 			this.setState({priceFilterEn: 1});
@@ -161,6 +220,10 @@ class Settings extends React.Component {
 	};
 
 	render() {
+		setTimeout(() => {
+			let test = this.GetColumnIndex('30d');
+			console.log('test = ', test);
+		}, 5000);
 		return (
 			<div style={{margin: '5px'}}>
 				<FontAwesomeIcon
@@ -293,6 +356,23 @@ class Settings extends React.Component {
 				/>
 				<br />
 				<br />
+
+				<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{' کف قیمت '}</span>
+				<TextField
+					select
+					id="filled-select-currency"
+					onChange={this.KafeGheymatChanged}
+					variant="filled">
+					{[5, 10, 20, 30].map((value, i) => (
+						<MenuItem
+							key={value}
+							value={value}
+							>
+							{value.toString()}
+						</MenuItem>
+					))}
+				</TextField>
+				<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{' روزه '}</span>
 			</div>
 		);
 	}

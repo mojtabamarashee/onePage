@@ -1,12 +1,14 @@
 import React from 'react';
 import './table.css';
 import ReactDOM from 'react-dom';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCog} from '@fortawesome/free-solid-svg-icons';
-import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
+import _ from 'lodash';
+const axios = require('axios');
 let curRows = allRows,
+	url,
 	tableThis,
-	table;
+	table, columns,
+	request,
+	temp;
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
 class Table extends React.Component {
@@ -15,6 +17,7 @@ class Table extends React.Component {
 		this.state = {
 			PEPosFlag: 0,
 			PESmallerThanSecFlag: 0,
+			d360: [],
 		};
 		tableThis = this;
 	}
@@ -32,6 +35,10 @@ class Table extends React.Component {
 			},
 		});
 		curRows = [];
+        setTimeout(()=>{
+		columns = table.settings().init().columns[0].name;
+        console.log("columns1 = ", columns);
+        }, 1000)
 	}
 
 	componentWillUnmount() {}
@@ -63,22 +70,16 @@ class Table extends React.Component {
 		const blackColor = {color: 'black'};
 		let stylee, bgColor, color, num, secAvg;
 		this.GetCurRows();
+
+		let maxI;
+		if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+			maxI = 1;
+		} else {
+			// production code
+			maxI = 3000;
+		}
 		return (
 			<div style={{margin: '5px'}}>
-				<FontAwesomeIcon
-					style={{margin: '0 0 5px 0'}}
-					onClick={() => this.props.ChangeMode('table')}
-					icon={faCog}
-					size="3x"
-					color="lightBlue"
-				/>
-				<FontAwesomeIcon
-					style={{margin: '0 0 5px 0', float: 'right'}}
-					onClick={null}
-					icon={faQuestionCircle}
-					size="3x"
-					color="lightBlue"
-				/>
 				<div className="table-responsive">
 					<table id="table" className="table table-striped table-bordered display nowrap">
 						<thead>
@@ -101,8 +102,9 @@ class Table extends React.Component {
 								<td>10d</td>
 								<td>30d</td>
 								<td>60d</td>
-								<td>حv</td>
-								<td>حn</td>
+								<td>360d</td>
+								<td>hv</td>
+								<td>hn</td>
 								<td>cs</td>
 								<td>س</td>
 								<td>t</td>
@@ -138,14 +140,17 @@ class Table extends React.Component {
 													</td>
 												))
 											}
-
 											<td data-sort={v.tvol}>
 												{numeral(v.tvol)
 													.format('0a')
 													.toUpperCase()}
 											</td>
 											<td>
-												{numeral((v.ct.Sell_CountI / v.ct.Sell_I_Volume) / (v.ct.Buy_CountI / v.ct.Buy_I_Volume)).format()}
+												{numeral(
+													v.ct.Sell_CountI /
+														v.ct.Sell_I_Volume /
+														(v.ct.Buy_CountI / v.ct.Buy_I_Volume),
+												).format()}
 											</td>
 											<td>{v.rsi}</td>
 											{
@@ -175,11 +180,40 @@ class Table extends React.Component {
 													.toUpperCase()}
 											</td>
 											<td>{v.floatVal}</td>
-
 											<td>{v.d5}</td>
 											<td>{v.d10}</td>
 											<td>{v.d30}</td>
 											<td>{v.d60}</td>
+											{
+												(((url =
+													'http://www.tsetmc.com/tsev2/data/InstTradeHistory.aspx?i=' +
+													v.inscode +
+													'&Top=999999&A=0'),
+												i < maxI
+													? axios
+															.get(url)
+															.then(response => {
+																// handle success
+																v.priceHist = response.data.split(';');
+																let val =
+																	((v.pc - v.priceHist[200].split('@')[1]) /
+																		v.priceHist[200].split('@')[1]) *
+																	100;
+
+																table
+																	.cell({row: i, column: 18})
+																	.data(numeral(val).format());
+															})
+															.catch(function(error) {
+																// handle error
+																console.log(error);
+															})
+															.finally(function() {
+																// always executed
+															})
+													: null),
+												<td>{this.state.d360[i]}</td>)
+											}
 											<td data-sort={v.ct.Buy_N_Volume}>
 												{numeral(v.ct.Buy_N_Volume)
 													.format('0a')
@@ -193,7 +227,6 @@ class Table extends React.Component {
 													.toUpperCase()}
 											</td>
 											<td>{v.cs}</td>
-
 											<td>
 												<a href={'https://www.sahamyab.com/hashtag/' + v.name + '/post'}>
 													<img
@@ -204,7 +237,6 @@ class Table extends React.Component {
 													/>
 												</a>
 											</td>
-
 											<td>
 												<a
 													href={
@@ -240,4 +272,4 @@ class Table extends React.Component {
 	}
 }
 
-export {Table, curRows, tableThis, table};
+export {Table, curRows, tableThis, table, columns};

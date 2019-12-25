@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Settings, filters} from './Setting.jsx';
+import {Header} from './Header.jsx';
 import {Table, table} from './Table.jsx';
 
 class Main extends React.Component {
@@ -15,7 +16,7 @@ class Main extends React.Component {
 		if (mode == 'table') {
 			this.setState({mode: 'settings'});
 		} else {
-			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map((v => v.func));
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
 			this.setState({mode: 'table'}, () => table.draw());
 		}
 	};
@@ -30,7 +31,8 @@ class Main extends React.Component {
 		return (
 			<div>
 				<div style={tableStyle}>
-					<Table ChangeMode={this.ChangeMode} />
+					<Header ChangeMode={this.ChangeMode} badge={filters.filter(v => v.exist).length} />
+					<Table />
 				</div>
 				<div style={settingStyle}>
 					<Settings ChangeMode={this.ChangeMode} />
