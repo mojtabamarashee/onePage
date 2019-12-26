@@ -14,6 +14,7 @@ import Button from '@material-ui/core/Button';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
+let kafeGheymat;
 
 filters.push({
 	exist: 0,
@@ -93,16 +94,17 @@ filters.push({
 	},
 });
 
-
 filters.push({
 	exist: 0,
 	name: 'KafeGheymat',
 	func: (settings, data, dataIndex) => {
-		var row = allRows.filter((v, i)=> i < KafeGheymat).find(v => (v.pc <= Math.min.apply(null, v.hist.map((v, i) => v.PClosing))));
-		if (row) {
-			let css = row.csName;
-			if (css == kafeGheymat) {
-				return true;
+		var v = allRows.find(v => v.name == data[0]);
+		if (v) {
+			if (v.pClosingHist && v.pClosingHist[kafeGheymat]) {
+				let hist = v.pClosingHist.slice(0, kafeGheymat);
+                let r;
+				v.pc <= (Math.min(...hist)) ? r = true : r = false;
+				return r;
 			}
 		}
 		return false;
@@ -129,18 +131,18 @@ class Settings extends React.Component {
 		};
 	}
 
-	GetColumnIndex = name => {
-		let index = table.columns().map((v, i) => {
-			let columnss = table.settings().init().columns[0];
-			console.log('columnss = ', columnss);
-			if (columns[index].name == name) {
-				console.log('name = ', name);
-				console.log('i = ', i);
-				return i;
-			}
-		});
-		return index;
-	};
+	//GetColumnIndex = name => {
+	//	let index = table.columns().map((v, i) => {
+	//		let columnss = table.settings().init().columns[0];
+	//		console.log('columnss = ', columnss);
+	//		if (columns[index].name == name) {
+	//			console.log('name = ', name);
+	//			console.log('i = ', i);
+	//			return i;
+	//		}
+	//	});
+	//	return index;
+	//};
 
 	PayaniPos = () => e => {
 		if (e.target.checked) {
@@ -192,14 +194,15 @@ class Settings extends React.Component {
 		}
 	};
 
-    KafeGheymatChanged = e =>{
+	KafeGheymatChanged = e => {
 		kafeGheymat = e.target.value;
-		if (selectedCs != 'none') {
-			filters.find(v => v.name == 'kafeGheymat').exist = 1;
+        console.log("kafeGheymat = ", kafeGheymat);
+		if (kafeGheymat != 0) {
+			filters.find(v => v.name == 'KafeGheymat').exist = 1;
 		} else {
-			filters.find(v => v.name == 'kafeGheymat').exist = 0;
+			filters.find(v => v.name == 'KafeGheymat').exist = 0;
 		}
-    }
+	};
 
 	PriceEn = e => {
 		if (e.target.checked) {
@@ -221,8 +224,8 @@ class Settings extends React.Component {
 
 	render() {
 		setTimeout(() => {
-			let test = this.GetColumnIndex('30d');
-			console.log('test = ', test);
+			//let test = this.GetColumnIndex('30d');
+			//console.log('test = ', test);
 		}, 5000);
 		return (
 			<div style={{margin: '5px'}}>
@@ -358,16 +361,9 @@ class Settings extends React.Component {
 				<br />
 
 				<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{' کف قیمت '}</span>
-				<TextField
-					select
-					id="filled-select-currency"
-					onChange={this.KafeGheymatChanged}
-					variant="filled">
-					{[5, 10, 20, 30].map((value, i) => (
-						<MenuItem
-							key={value}
-							value={value}
-							>
+				<TextField select id="filled-select-currency" onChange={this.KafeGheymatChanged} variant="filled">
+					{[0, 2, 5, 10, 20, 30].map((value, i) => (
+						<MenuItem key={value} value={value}>
 							{value.toString()}
 						</MenuItem>
 					))}

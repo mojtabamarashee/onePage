@@ -2,11 +2,11 @@ import React from 'react';
 import './table.css';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-const axios = require('axios');
 let curRows = allRows,
 	url,
 	tableThis,
-	table, columns,
+	table,
+	columns,
 	request,
 	temp;
 var numeral = require('numeral');
@@ -35,10 +35,7 @@ class Table extends React.Component {
 			},
 		});
 		curRows = [];
-        setTimeout(()=>{
-		columns = table.settings().init().columns[0].name;
-        console.log("columns1 = ", columns);
-        }, 1000)
+		setTimeout(() => {}, 1000);
 	}
 
 	componentWillUnmount() {}
@@ -106,6 +103,7 @@ class Table extends React.Component {
 								<td>hv</td>
 								<td>hn</td>
 								<td>cs</td>
+								<td>l</td>
 								<td>س</td>
 								<td>t</td>
 							</tr>
@@ -184,36 +182,11 @@ class Table extends React.Component {
 											<td>{v.d10}</td>
 											<td>{v.d30}</td>
 											<td>{v.d60}</td>
-											{
-												(((url =
-													'http://www.tsetmc.com/tsev2/data/InstTradeHistory.aspx?i=' +
-													v.inscode +
-													'&Top=999999&A=0'),
-												i < maxI
-													? axios
-															.get(url)
-															.then(response => {
-																// handle success
-																v.priceHist = response.data.split(';');
-																let val =
-																	((v.pc - v.priceHist[200].split('@')[1]) /
-																		v.priceHist[200].split('@')[1]) *
-																	100;
-
-																table
-																	.cell({row: i, column: 18})
-																	.data(numeral(val).format());
-															})
-															.catch(function(error) {
-																// handle error
-																console.log(error);
-															})
-															.finally(function() {
-																// always executed
-															})
-													: null),
-												<td>{this.state.d360[i]}</td>)
-											}
+											<td>
+												{v.pClosingHist && v.pClosingHist[200]
+													? numeral((v.pc - v.pClosingHist[200]) / v.pClosingHist[200] * 100).format()
+													: null}
+											</td>
 											<td data-sort={v.ct.Buy_N_Volume}>
 												{numeral(v.ct.Buy_N_Volume)
 													.format('0a')
@@ -227,6 +200,7 @@ class Table extends React.Component {
 													.toUpperCase()}
 											</td>
 											<td>{v.cs}</td>
+											<td>{v.pClosingHist ? v.pClosingHist.length : null}</td>
 											<td>
 												<a href={'https://www.sahamyab.com/hashtag/' + v.name + '/post'}>
 													<img
