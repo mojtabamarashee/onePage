@@ -16,7 +16,7 @@ class Header extends React.Component {
 				<Badge badgeContent={this.props.badge} color="primary">
 					<FontAwesomeIcon
 						style={{margin: '10px 0 5px 0'}}
-						onClick={() => this.props.ChangeMode('table')}
+						onClick={() => this.props.ChangeMode('settings')}
 						icon={faFilter}
 						size="3x"
 						color="lightBlue"
@@ -24,7 +24,7 @@ class Header extends React.Component {
 				</Badge>
 				<FontAwesomeIcon
 					style={{margin: '0 0 5px 0', float: 'right'}}
-					onClick={null}
+					onClick={() => this.props.ChangeMode('help')}
 					icon={faQuestionCircle}
 					size="3x"
 					color="lightBlue"

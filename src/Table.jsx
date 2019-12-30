@@ -91,7 +91,8 @@ class Table extends React.Component {
 								<td>bs</td>
 								<td>RSI</td>
 								<td>Q</td>
-								<td>MM</td>
+								<td>mm60</td>
+								<td>mmY</td>
 								<td>f</td>
 								<td>tV</td>
 								<td>fV%</td>
@@ -158,7 +159,7 @@ class Table extends React.Component {
 														: Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0
 															? v.qd1
 															: null),
-												num > 0 ? (color = 'green') : (color = 'red'),
+												num >= 0 ? (color = 'green') : (color = 'red'),
 												(
 													<td data-sort={num} style={{color: color}}>
 														{numeral(num)
@@ -171,6 +172,10 @@ class Table extends React.Component {
 												(v.afzayeshSarmayeh == 0 ? (bgColor = []) : (bgColor = '#C0C0C0'),
 												<td bgcolor={bgColor}> {v.mm} </td>)
 											}
+											{
+												(v.afzayeshSarmayeh == 0 ? (bgColor = []) : (bgColor = '#C0C0C0'),
+												<td bgcolor={bgColor}> {v.mmY} </td>)
+											}
 											<td style={stylee}>{v.flow}</td>
 											<td data-sort={v.totalVol}>
 												{numeral(v.totalVol)
@@ -182,11 +187,7 @@ class Table extends React.Component {
 											<td>{v.d10}</td>
 											<td>{v.d30}</td>
 											<td>{v.d60}</td>
-											<td>
-												{v.pClosingHist && v.pClosingHist[200]
-													? numeral((v.pc - v.pClosingHist[200]) / v.pClosingHist[200] * 100).format()
-													: null}
-											</td>
+											<td>{v.d360}</td>
 											<td data-sort={v.ct.Buy_N_Volume}>
 												{numeral(v.ct.Buy_N_Volume)
 													.format('0a')

@@ -43,6 +43,18 @@ filters.push({
 
 filters.push({
 	exist: 0,
+	name: 'SafeKharid',
+	func: (settings, data, dataIndex) => {
+		var pe = parseFloat(data[2]) || 0;
+		if (pe > 0) {
+			return true;
+		}
+		return false;
+	},
+});
+
+filters.push({
+	exist: 0,
 	name: 'PESmallerThanSec',
 	func: (settings, data, dataIndex) => {
 		var pe = parseFloat(data[2]) || 0;
@@ -230,7 +242,7 @@ class Settings extends React.Component {
 		return (
 			<div style={{margin: '5px'}}>
 				<FontAwesomeIcon
-					onClick={() => this.props.ChangeMode('settings')}
+					onClick={() => this.props.ChangeMode('table')}
 					icon={faLongArrowAltLeft}
 					size="4x"
 					color="black"
@@ -369,6 +381,25 @@ class Settings extends React.Component {
 					))}
 				</TextField>
 				<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{' روزه '}</span>
+
+				<br />
+				<FormControlLabel
+					control={
+						<Checkbox
+							checked={null}
+							onChange={this.SafeKharid()}
+							value="gilad"
+							inputProps={{
+								'aria-label': 'secondary checkbox',
+							}}
+							color="primary"
+						/>
+					}
+					label="صف خرید باشد"
+				/>
+				<br />
+
+
 			</div>
 		);
 	}
