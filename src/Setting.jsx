@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import {Typography} from '@material-ui/core';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
@@ -45,14 +46,72 @@ filters.push({
 	exist: 0,
 	name: 'SafeKharid',
 	func: (settings, data, dataIndex) => {
-		var pe = parseFloat(data[2]) || 0;
-		if (pe > 0) {
-			return true;
-		}
-		return false;
+		var row = allRows.find(v => v.name == data[0]);
+		if (row) {
+			let r = Math.round(row.pd1) == Math.round(row.tmax) && row.qd1 > 0 ? true : false;
+			return r;
+		} else return false;
 	},
 });
 
+filters.push({
+	exist: 0,
+	name: 'GhodrateKharidarBishtar',
+	func: (settings, data, dataIndex) => {
+		let bs = data[7];
+		let r;
+		bs > 1 ? (r = true) : (r = false);
+		return r;
+	},
+});
+
+filters.push({
+	exist: 0,
+	name: 'SafeKharidNabashad',
+	func: (settings, data, dataIndex) => {
+		var row = allRows.find(v => v.name == data[0]);
+		if (row) {
+			let r = Math.round(row.pd1) == Math.round(row.tmax) && row.qd1 > 0 ? false : true;
+			return r;
+		} else return false;
+	},
+});
+
+filters.push({
+	exist: 0,
+	name: 'SafeForoushNabashad',
+	func: (settings, data, dataIndex) => {
+		var row = allRows.find(v => v.name == data[0]);
+		if (row) {
+			let r = Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0 ? false : true;
+			return r;
+		} else return false;
+	},
+});
+
+filters.push({
+	exist: 0,
+	name: 'SafeForoush',
+	func: (settings, data, dataIndex) => {
+		var row = allRows.find(v => v.name == data[0]);
+		if (row) {
+			let r = Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0 ? true : false;
+			return r;
+		} else return false;
+	},
+});
+
+filters.push({
+	exist: 0,
+	name: 'SafeForoushNabashad',
+	func: (settings, data, dataIndex) => {
+		var row = allRows.find(v => v.name == data[0]);
+		if (row) {
+			let r = Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0 ? false : true;
+			return r;
+		} else return false;
+	},
+});
 filters.push({
 	exist: 0,
 	name: 'PESmallerThanSec',
@@ -114,8 +173,8 @@ filters.push({
 		if (v) {
 			if (v.pClosingHist && v.pClosingHist[kafeGheymat]) {
 				let hist = v.pClosingHist.slice(0, kafeGheymat);
-                let r;
-				v.pc <= (Math.min(...hist)) ? r = true : r = false;
+				let r;
+				v.pc <= Math.min(...hist) ? (r = true) : (r = false);
 				return r;
 			}
 		}
@@ -172,6 +231,46 @@ class Settings extends React.Component {
 		}
 	};
 
+	GhodrateKharidarBishtar = () => e => {
+		if (e.target.checked) {
+			filters.find(v => v.name == 'GhodrateKharidarBishtar').exist = 1;
+		} else {
+			filters.find(v => v.name == 'GhodrateKharidarBishtar').exist = 0;
+		}
+	};
+
+	SafeKharid = () => e => {
+		if (e.target.checked) {
+			filters.find(v => v.name == 'SafeKharid').exist = 1;
+		} else {
+			filters.find(v => v.name == 'SafeKharid').exist = 0;
+		}
+	};
+
+	SafeKharidNabashad = () => e => {
+		if (e.target.checked) {
+			filters.find(v => v.name == 'SafeKharidNabashad').exist = 1;
+		} else {
+			filters.find(v => v.name == 'SafeKharidNabashad').exist = 0;
+		}
+	};
+
+	SafeForoush = () => e => {
+		if (e.target.checked) {
+			filters.find(v => v.name == 'SafeForoush').exist = 1;
+		} else {
+			filters.find(v => v.name == 'SafeForoush').exist = 0;
+		}
+	};
+
+	SafeForoushNabashad = () => e => {
+		if (e.target.checked) {
+			filters.find(v => v.name == 'SafeForoushNabashad').exist = 1;
+		} else {
+			filters.find(v => v.name == 'SafeForoushNabashad').exist = 0;
+		}
+	};
+
 	PESmallerThanSec = () => e => {
 		if (e.target.checked) {
 			filters.find(v => v.name == 'PESmallerThanSec').exist = 1;
@@ -208,7 +307,7 @@ class Settings extends React.Component {
 
 	KafeGheymatChanged = e => {
 		kafeGheymat = e.target.value;
-        console.log("kafeGheymat = ", kafeGheymat);
+		console.log('kafeGheymat = ', kafeGheymat);
 		if (kafeGheymat != 0) {
 			filters.find(v => v.name == 'KafeGheymat').exist = 1;
 		} else {
@@ -373,9 +472,18 @@ class Settings extends React.Component {
 				<br />
 
 				<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{' کف قیمت '}</span>
-				<TextField select id="filled-select-currency" onChange={this.KafeGheymatChanged} variant="filled">
+				<TextField
+					select
+					id="filled-select-currency"
+					inputProps={{
+						style: {
+							height: '5%',
+						},
+					}}
+					onChange={this.KafeGheymatChanged}
+					variant="filled">
 					{[0, 2, 5, 10, 20, 30].map((value, i) => (
-						<MenuItem key={value} value={value}>
+						<MenuItem key={value} style={{height: '10%'}} value={value}>
 							{value.toString()}
 						</MenuItem>
 					))}
@@ -383,23 +491,122 @@ class Settings extends React.Component {
 				<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{' روزه '}</span>
 
 				<br />
-				<FormControlLabel
-					control={
-						<Checkbox
-							checked={null}
-							onChange={this.SafeKharid()}
-							value="gilad"
-							inputProps={{
-								'aria-label': 'secondary checkbox',
-							}}
-							color="primary"
-						/>
-					}
-					label="صف خرید باشد"
-				/>
 				<br />
+				<table style={{float: 'right'}}>
+					<tr>
+						<td>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={null}
+										onChange={this.SafeKharid()}
+										value="gilad"
+										inputProps={{
+											'aria-label': 'secondary checkbox',
+										}}
+										color="primary"
+									/>
+								}
+								label={
+									<Typography style={{fontFamily: 'Courier New, Courier, monospace'}}>
+										صف خرید باشد
+									</Typography>
+								}
+							/>
+						</td>
+						<td>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={null}
+										onChange={this.SafeKharidNabashad()}
+										value="gilad"
+										inputProps={{
+											'aria-label': 'secondary checkbox',
+										}}
+										color="primary"
+									/>
+								}
+								label={
+									<Typography style={{fontFamily: 'Courier New, Courier, monospace'}}>
+										صف خرید نباشد
+									</Typography>
+								}
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={null}
+										onChange={this.SafeForoush()}
+										value="gilad"
+										inputProps={{
+											'aria-label': 'secondary checkbox',
+										}}
+										color="primary"
+									/>
+								}
+								label={
+									<Typography style={{fontFamily: 'Courier New, Courier, monospace'}}>
+										صف فروش باشد
+									</Typography>
+								}
+							/>
+						</td>
+						<td>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={null}
+										onChange={this.SafeForoushNabashad()}
+										value="gilad"
+										inputProps={{
+											'aria-label': 'secondary checkbox',
+										}}
+										color="primary"
+									/>
+								}
+								label={
+									<Typography style={{fontFamily: 'Courier New, Courier, monospace'}}>
+										صف فروش نباشد
+									</Typography>
+								}
+							/>
+						</td>
+					</tr>
+				</table>
 
-
+				<br />
+				<br />
+                <p style={{clear:"right"}} />
+				<table style={{float: 'right'}}>
+					<tr>
+						<td>
+							<FormControlLabel
+								style={{float: 'right'}}
+								control={
+									<Checkbox
+										checked={null}
+										onChange={this.GhodrateKharidarBishtar()}
+										value="gilad"
+										inputProps={{
+											'aria-label': 'secondary checkbox',
+										}}
+										color="primary"
+									/>
+								}
+								label={
+									<Typography style={{fontFamily: 'Courier New, Courier, monospace'}}>
+										قدرت خریدار بیشتر از فروشنده
+									</Typography>
+								}
+							/>
+						</td>
+					</tr>
+				</table>
 			</div>
 		);
 	}

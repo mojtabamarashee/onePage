@@ -8,7 +8,7 @@ let curRows = allRows,
 	table,
 	columns,
 	request,
-	temp;
+	temp,ctx;
 var numeral = require('numeral');
 numeral.defaultFormat('0,0.[00]');
 class Table extends React.Component {
@@ -25,6 +25,7 @@ class Table extends React.Component {
 	componentDidMount() {
 		curRows = allRows;
 		var numeral = require('numeral');
+
 		table = $('#table').DataTable({
 			order: [[1, 'desc']],
 			pageLength: 10,
@@ -34,7 +35,14 @@ class Table extends React.Component {
 				rightColumns: 0,
 			},
 		});
-		curRows = [];
+		allRows.filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/)).forEach((v, i) => {
+			if (v && this.vscode) {
+				const ctx = this.vscode.getContext('2d');
+				ctx.fillStyle = 'green';
+				console.log('ctx = ', ctx);
+				ctx.fillRect(0, 0, 20, 20);
+			}
+		});
 		setTimeout(() => {}, 1000);
 	}
 
@@ -105,6 +113,7 @@ class Table extends React.Component {
 								<td>hn</td>
 								<td>cs</td>
 								<td>l</td>
+								<td>plot</td>
 								<td>س</td>
 								<td>t</td>
 							</tr>
@@ -158,7 +167,7 @@ class Table extends React.Component {
 														? -v.qo1
 														: Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0
 															? v.qd1
-															: null),
+															: 0),
 												num >= 0 ? (color = 'green') : (color = 'red'),
 												(
 													<td data-sort={num} style={{color: color}}>
@@ -202,6 +211,19 @@ class Table extends React.Component {
 											</td>
 											<td>{v.cs}</td>
 											<td>{v.pClosingHist ? v.pClosingHist.length : null}</td>
+											{
+												<td style={{padding: 0}}>
+													<canvas
+														ref={ref => (this.vscode = ref)}
+														width="20px"
+														height="30px"
+														style={{display: 'block', maxHeight: '100%', margin: 0}}
+													/>
+												</td>,
+                                                {	ctx = this.vscode.getContext('2d'), ctx.fillStyle = 'green',
+													console.log('ctx = ', ctx), ctx.fillRect(0, 0, 20, 20),
+                                                }
+											}
 											<td>
 												<a href={'https://www.sahamyab.com/hashtag/' + v.name + '/post'}>
 													<img
