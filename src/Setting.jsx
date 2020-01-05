@@ -12,6 +12,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import {Typography} from '@material-ui/core';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
@@ -226,8 +228,14 @@ class Settings extends React.Component {
 	PEPos = () => e => {
 		if (e.target.checked) {
 			filters.find(v => v.name == 'PEPos').exist = 1;
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+			table.draw();
+			console.log('info=', table.page.info().recordsDisplay);
 		} else {
 			filters.find(v => v.name == 'PEPos').exist = 0;
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+			table.draw();
+			console.log('info=', table.page.info().recordsDisplay);
 		}
 	};
 
@@ -334,12 +342,21 @@ class Settings extends React.Component {
 	};
 
 	render() {
-		setTimeout(() => {
-			//let test = this.GetColumnIndex('30d');
-			//console.log('test = ', test);
-		}, 5000);
 		return (
 			<div style={{margin: '5px'}}>
+				<Snackbar
+					anchorOrigin={{
+						vertical: 'bottom',
+						horizontal: 'left',
+					}}
+					autoHideDuration={6000}
+					onClose={null}>
+					<SnackbarContent
+						aria-describedby="client-snackbar"
+						style={{backgroundColor: "#43a047"}}
+						message={<span id="client-snackbar">{'test'}</span>}
+					/>
+				</Snackbar>
 				<FontAwesomeIcon
 					onClick={() => this.props.ChangeMode('table')}
 					icon={faLongArrowAltLeft}
@@ -581,7 +598,7 @@ class Settings extends React.Component {
 
 				<br />
 				<br />
-                <p style={{clear:"right"}} />
+				<p style={{clear: 'right'}} />
 				<table style={{float: 'right'}}>
 					<tr>
 						<td>
