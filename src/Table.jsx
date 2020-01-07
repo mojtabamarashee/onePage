@@ -324,7 +324,7 @@ class Table extends React.Component {
                     (stylee = {color: v.color}),
                     (
                       <tr key={v.l30}>
-                        <td>{v.name}</td>
+                        <td >{v.name}</td>
                         <td>{v.pc}</td>
                         <td>{v.pe}</td>
                         <td>{v.sectorPE}</td>
@@ -402,10 +402,14 @@ class Table extends React.Component {
                         </td>
                         <td>{v.floatVal}</td>
                         {
-                          (v.d5 >= 0 ? (color = 'green') : (color = 'red'),
+                          (v.d5
+                            ? v.d5 > 0
+                              ? ((dataSort = v.d5), (color = 'green'))
+                              : ((dataSort = v.d5), (color = 'red'))
+                            : ((color = 'red'), (dataSort = 0)),
                           (
                             <td
-                              data-sort={v.d5}
+                              data-sort={dataSort == 'NaN' ? 0 : dataSort}
                               style={{padding: 0, color: color}}>
                               {v.d5}
                               <canvas
@@ -422,10 +426,14 @@ class Table extends React.Component {
                           ))
                         }
                         {
-                          (v.d10 >= 0 ? (color = 'green') : (color = 'red'),
+                          (v.d10
+                            ? v.d10 > 0
+                              ? ((dataSort = v.d10), (color = 'green'))
+                              : ((dataSort = v.d10), (color = 'red'))
+                            : ((color = 'red'), (dataSort = 0)),
                           (
                             <td
-                              data-sort={v.d10}
+                              data-sort={dataSort == 'NaN' ? 0 : dataSort}
                               style={{padding: 0, color: color}}>
                               {v.d10}
                               <canvas
@@ -442,10 +450,14 @@ class Table extends React.Component {
                           ))
                         }
                         {
-                          (v.d30 >= 0 ? (color = 'green') : (color = 'red'),
+                          (v.d30
+                            ? v.d30 > 0
+                              ? ((dataSort = v.d30), (color = 'green'))
+                              : ((dataSort = v.d30), (color = 'red'))
+                            : ((color = 'red'), (dataSort = 0)),
                           (
                             <td
-                              data-sort={v.d30}
+                              data-sort={dataSort == 'NaN' ? 0 : dataSort}
                               style={{padding: 0, color: color}}>
                               {v.d30}
                               <canvas
@@ -469,7 +481,7 @@ class Table extends React.Component {
                             : ((color = 'red'), (dataSort = 0)),
                           (
                             <td
-                              data-sort={dataSort == "NaN" ? 0 : dataSort}
+                              data-sort={dataSort == 'NaN' ? 0 : dataSort}
                               style={{padding: 0, color: color}}>
                               {v.d60}
                               <canvas
@@ -486,10 +498,14 @@ class Table extends React.Component {
                           ))
                         }
                         {
-                          (v.d360 >= 0 ? (color = 'green') : (color = 'red'),
+                          (v.d360
+                            ? v.d360 > 0
+                              ? ((dataSort = v.d360), (color = 'green'))
+                              : ((dataSort = v.d360), (color = 'red'))
+                            : ((color = 'red'), (dataSort = 0)),
                           (
                             <td
-                              data-sort={v.d360}
+                              data-sort={dataSort == 'NaN' ? 0 : dataSort}
                               style={{padding: 0, color: color}}>
                               {v.d360}
                               <canvas

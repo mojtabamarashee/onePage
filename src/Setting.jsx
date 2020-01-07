@@ -276,6 +276,7 @@ class Settings extends React.Component {
       filters.find(v => v.name == 'SafeKharid').exist = 1;
       $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
       table.draw();
+      console.log('saf=', table.page.info().recordsDisplay);
       this.setState({searchResultNum: table.page.info().recordsDisplay});
     } else {
       filters.find(v => v.name == 'SafeKharid').exist = 0;
