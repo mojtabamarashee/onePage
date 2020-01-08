@@ -36,7 +36,7 @@ class Header extends React.Component {
           />
         ) : (
           <FontAwesomeIcon
-            style={{margin: '10px 0 5px 5px'}}
+            style={{margin: '10px 0 0px 0px'}}
             onClick={() => {
               this.props.EnableFilters();
             }}
