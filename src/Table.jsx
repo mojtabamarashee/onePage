@@ -191,6 +191,20 @@ class Table extends React.Component {
 				this.Plot('v360d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#000000');
 			});
 
+		allRows
+			.filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+			.filter(v => v.ctHist)
+			.forEach((v, i) => {
+				let data = v.ctHist
+					.map(v1 => v1.split(','))
+					.map(v2 => v2[1])
+					.reverse();
+				data.push(v.ct.Buy_CountN);
+				if (v.name == 'فسا') console.log('data = ', data);
+				let canvas = document.getElementById('hn' + v.inscode);
+				this.Plot('hn' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#000000');
+			});
+
 		table = $('#table').DataTable({
 			order: [[1, 'desc']],
 			pageLength: 10,
@@ -316,8 +330,8 @@ class Table extends React.Component {
 																.toUpperCase()
 														: 0),
 												(
-													<td data-sort={v.tvol}>
-														{t1} <p style={{clear:"left", margin:"0"}}/> {t2}
+													<td style={{margin: '0', padding: '0'}} data-sort={v.tvol}>
+														{t1} <p style={{clear: 'left', margin: '0'}} /> {t2}
 													</td>
 												))
 											}
@@ -486,12 +500,24 @@ class Table extends React.Component {
 													.toString()
 													.toUpperCase()}
 											</td>
-											<td data-sort={v.ct.Buy_CountN}>
-												{numeral(v.ct.Buy_CountN)
-													.format('0a')
-													.toString()
-													.toUpperCase()}
-											</td>
+											{
+												<td data-sort={v.ct.Buy_CountN}>
+													{numeral(v.ct.Buy_CountN)
+														.format('0a')
+														.toString()
+														.toUpperCase()}
+													<canvas
+														id={'hn' + v.inscode.toString()}
+														width="70px"
+														height="33px"
+														style={{
+															display: 'block',
+															maxHeight: '100%',
+															margin: 0,
+														}}
+													/>
+												</td>
+											}
 											<td>{v.cs}</td>
 											<td>{v.pClosingHist ? v.pClosingHist.length : null}</td>
 											<td>
