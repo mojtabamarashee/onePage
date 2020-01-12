@@ -13,7 +13,8 @@ let curRows = allRows,
 	dataSort,
 	color2,
 	bgColor,
-	fgColor;
+	fgColor,
+	width;
 var numeral = require('numeral');
 let canvasMargin = 0.05;
 numeral.defaultFormat('0,0.[00]');
@@ -69,7 +70,7 @@ class Table extends React.Component {
 
 		ctx.beginPath();
 
-		ctx.moveTo(0 + canvasMargin * canvas.width, canvas.height - Scale(maxD/2, minD, maxD, min, max));
+		ctx.moveTo(0 + canvasMargin * canvas.width, canvas.height - Scale(maxD / 2, minD, maxD, min, max));
 		let x = Scale(canvas.width, 0, data.length, 0.05 * canvas.width, canvas.width - canvasMargin * canvas.height);
 		let y = canvas.height - Scale(maxD - canvasMargin * canvas.height, minD, maxD, min, max);
 		ctx.lineTo(x, y);
@@ -261,6 +262,7 @@ class Table extends React.Component {
 			order: [[1, 'desc']],
 			pageLength: 10,
 			scrollX: true,
+			bLengthChange: false,
 			fixedColumns: {
 				leftColumns: 1,
 				rightColumns: 0,
@@ -270,6 +272,7 @@ class Table extends React.Component {
 				{name: 'name'},
 				{name: 'pe'},
 				{name: 'tg'}, //taghire payani
+				{name: 'sw'}, //navasan
 				{name: 'v'},
 				{name: 'bs'},
 				{name: 'col-position'},
@@ -289,7 +292,6 @@ class Table extends React.Component {
 				{name: 'col-office'},
 				{name: 'col-extn'},
 				{name: 'col-email'},
-				{name: 'col-extn'},
 			],
 		});
 		$('#table tbody tr').on('click', function(event) {
@@ -341,20 +343,20 @@ class Table extends React.Component {
 			maxI = 3000;
 		}
 		return (
-			<div style={{margin: '5px'}}>
+			<div style={{margin: '0px'}}>
 				<div className="table-responsive">
 					<table id="table" className="table table-striped table-bordered display nowrap">
 						<thead>
 							<tr className="success">
 								<td>name</td>
 								<td>pe</td>
-								<td>ag</td>
+								<td>tg</td>
+								<td>sw</td>
 								<td>v</td>
 								<td>bs</td>
 								<td>RSI</td>
 								<td>Q</td>
-								<td>mm60</td>
-								<td>mmY</td>
+								<td>mm</td>
 								<td>f</td>
 								<td>tV</td>
 								<td>fV%</td>
@@ -437,7 +439,7 @@ class Table extends React.Component {
 												v.pcp >= 0 ? (color2 = 'green') : (color2 = 'red'),
 												(
 													<td
-														data-sort={secAvg}
+														data-sort={v.pcp}
 														style={{
 															padding: '0 0 0 4px',
 															fontSize: '14px',
@@ -445,13 +447,23 @@ class Table extends React.Component {
 														<span style={{color: color2}}>{v.pcp}</span>
 														<p style={{clear: 'left', margin: '0'}} />
 														<span style={{color: color, fontWeight: 'bold'}}>
-															{numeral(
-																secAvg,
-															).format() /*+
-                                ' (' +
-                                num.length +
-                                ')'*/}
+															{numeral(secAvg).format()}
 														</span>
+													</td>
+												))
+											}
+											{
+												(v.pmin && v.pmax && v.pcp
+													? (dataSort = ((v.pmax - v.pmin) / v.pc) * 100)
+													: (dataSort = 0),
+												(
+													<td
+														style={{
+															padding: '0 0 0 4px',
+															fontSize: '14px',
+														}}
+														data-sort={dataSort}>
+														{numeral(((v.pmax - v.pmin) / v.pc) * 100).format()}
 													</td>
 												))
 											}
@@ -484,15 +496,41 @@ class Table extends React.Component {
 													</td>
 												))
 											}
-											<td>
-												{v.ct
-													? numeral(
-															v.ct.Sell_CountI /
-																v.ct.Sell_I_Volume /
-																(v.ct.Buy_CountI / v.ct.Buy_I_Volume),
-													  ).format()
-													: null}
-											</td>
+											{
+												((width =
+													v.ct.Buy_I_Volume && v.tvol > 0
+														? ((v.ct.Buy_I_Volume / v.tvol) * 100).toString()
+														: '0'),
+												(
+													<td>
+														<span
+															style={{
+																padding: '0 0 0 4px',
+																fontSize: '14px',
+															}}>
+															{v.ct
+																? numeral(
+																		v.ct.Sell_CountI /
+																			v.ct.Sell_I_Volume /
+																			(v.ct.Buy_CountI / v.ct.Buy_I_Volume),
+																  ).format()
+																: null}
+														</span>
+														<p style={{clear: 'left', margin: '0'}} />
+														<div style={{height: '10px', borderStyle: 'groove'}}>
+															<div
+																style={{
+																	backgroundColor: 'blue',
+																	width: width + '%',
+																	padding: '0',
+																	margin: '0',
+																	height: '100%',
+																}}
+															/>
+														</div>
+													</td>
+												))
+											}
 											<td>{v.rsi}</td>
 											{
 												((num =
@@ -511,12 +549,16 @@ class Table extends React.Component {
 												))
 											}
 											{
-												(v.afzayeshSarmayeh == 0 ? (bgColor = []) : (bgColor = '#C0C0C0'),
-												<td bgcolor={bgColor}> {v.mm} </td>)
-											}
-											{
-												(v.afzayeshSarmayeh == 0 ? (bgColor = []) : (bgColor = '#C0C0C0'),
-												<td bgcolor={bgColor}> {v.mmY} </td>)
+												<td
+													data-sort={v.mm ? v.mm : 0}
+													style={{
+														padding: '0 0 0 4px',
+														fontSize: '14px',
+													}}>
+													<span>{v.mm ? v.mm : null}</span>
+													<p style={{clear: 'left', margin: '0'}} />
+													<span style={{fontWeight: 'bold'}}>{v.mmY ? v.mmY : null}</span>
+												</td>
 											}
 											<td style={stylee}>{v.flow}</td>
 											<td data-sort={v.totalVol}>
