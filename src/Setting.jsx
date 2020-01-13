@@ -25,7 +25,7 @@ filters.push({
   name: 'PayaniPos',
 
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row.pcp >= 0) {
       return true;
     }
@@ -38,7 +38,7 @@ filters.push({
   name: 'PayaniNeg',
 
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row.pcp < 0) {
       return true;
     }
@@ -50,7 +50,7 @@ filters.push({
   exist: 0,
   name: 'PEPos',
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row.pe > 0) {
       return true;
     }
@@ -62,7 +62,7 @@ filters.push({
   exist: 0,
   name: 'SafeKharid',
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row) {
       let r =
         Math.round(row.pd1) == Math.round(row.tmax) && row.qd1 > 0
@@ -77,7 +77,7 @@ filters.push({
   exist: 0,
   name: 'NoSandugh',
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row) {
       let r = row.cs != 68 ? true : false;
       return r;
@@ -101,7 +101,7 @@ filters.push({
   exist: 0,
   name: 'SafeKharidNabashad',
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row) {
       let r =
         Math.round(row.pd1) == Math.round(row.tmax) && row.qd1 > 0
@@ -116,7 +116,7 @@ filters.push({
   exist: 0,
   name: 'SafeForoushNabashad',
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row) {
       let r =
         Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0
@@ -131,7 +131,7 @@ filters.push({
   exist: 0,
   name: 'SafeForoush',
   func: (settings, data, dataIndex, obj) => {
-    var row = allRows.find(v => v.l30 == data[0])
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row) {
       let r =
         Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0
@@ -146,7 +146,7 @@ filters.push({
   exist: 0,
   name: 'SafeForoushNabashad',
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row) {
       let r =
         Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0
@@ -160,8 +160,9 @@ filters.push({
   exist: 0,
   name: 'PESmallerThanSec',
   func: (settings, data, dataIndex) => {
-    var pe = parseFloat(data[2]) || 0;
-    var secPe = parseFloat(data[3]) || 0;
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
+    var pe = row.pe || 0;
+    var secPe = row.sectorPE || 0;
     if (pe < secPe) {
       return true;
     }
@@ -173,8 +174,9 @@ filters.push({
   exist: 0,
   name: 'PESmallerThanHalfSec',
   func: (settings, data, dataIndex) => {
-    var pe = parseFloat(data[2]) || 0;
-    var secPe = parseFloat(data[3]) || 0;
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
+    var pe = row.pe || 0;
+    var secPe = row.sectorPE || 0;
     if (pe < 0.5 * secPe) {
       return true;
     }
@@ -186,8 +188,10 @@ filters.push({
   exist: 0,
   name: 'RsiLessThan',
   func: function(settings, data, dataIndex) {
-    var rsi = parseFloat(data[8]) || 0;
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
+    var rsi = parseFloat(row.rsi) || 0;
     if (rsi < 45) {
+        console.log("rsi = ", rsi);
       return true;
     }
     return false;
@@ -198,7 +202,7 @@ filters.push({
   exist: 0,
   name: 'CsSelected',
   func: (settings, data, dataIndex) => {
-    var row = allRows.find(v => v.l30 == data[0]);
+    var row = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (row) {
       let css = row.csName;
       if (css == selectedCs) {
@@ -213,7 +217,7 @@ filters.push({
   exist: 0,
   name: 'KafeGheymat',
   func: (settings, data, dataIndex) => {
-    var v = allRows.find(v => v.l30 == data[0]);
+    var v = allRows.find(v => v.l30 == data[0].split('___')[0]);
     if (v) {
       if (v.pClosingHist && v.pClosingHist[kafeGheymat]) {
         let hist = v.pClosingHist.slice(0, kafeGheymat);

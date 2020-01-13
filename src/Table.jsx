@@ -403,7 +403,7 @@ class Table extends React.Component {
                       <tr key={v.l30}>
                         {
                           <td
-                            data-search={v.l30}
+                            data-filter={v.l30 + '___' + v.name}
                             style={{
                               margin: '0',
                               padding: '0 0 0 4px',
