@@ -5,6 +5,10 @@ table.dataTable tbody th, table.dataTable tbody td {
 .dataTables_filter {
    width: 20%;
 }
+.dataTables_info{
+    font-size : 14px
+}
+
 
 tr.row_selected td{background-color:Beige !important;}
 
