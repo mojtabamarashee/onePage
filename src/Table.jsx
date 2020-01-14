@@ -14,7 +14,8 @@ let curRows = allRows,
 	color2,
 	bgColor,
 	fgColor,
-	width;
+	width,
+	index;
 var numeral = require('numeral');
 let canvasMargin = 0.05;
 numeral.defaultFormat('0,0.[00]');
@@ -35,23 +36,37 @@ class Table extends React.Component {
 		tableThis = this;
 	}
 
-	Plot = (canvasId, data, min, max, color) => {
+	Plot = (canvasId, data, min, max, op) => {
 		let canvas = document.getElementById(canvasId);
 		let ctx = canvas.getContext('2d');
 
-		let minD = Math.min(...data);
-		let maxD = Math.max(...data);
+		let minDOrig = Math.min(...data);
+		let maxDOrig = Math.max(...data);
 
-		minD = minD - 0.001 * minD;
-		maxD = maxD + 0.001 * maxD;
+		let minD = minDOrig - 0.001 * minDOrig;
+		let maxD = maxDOrig + 0.001 * maxDOrig;
 
 		ctx.beginPath();
-		if (color) ctx.strokeStyle = color;
+		if (op && op.color) ctx.strokeStyle = op.color;
 		ctx.moveTo(0 + canvasMargin * canvas.width, canvas.height - Scale(data[0], minD, maxD, min, max));
 
 		data.forEach((v1, i1) => {
 			let x = Scale(i1, 0, data.length, 0.05 * canvas.width, canvas.width - canvasMargin * canvas.height);
 			let y = canvas.height - Scale(v1, minD, maxD, min, max);
+			if (op && op.minMaxFlag) {
+				if (v1 == minDOrig) {
+					ctx.font = '10px Comic Sans MS';
+					ctx.fillStyle = 'blue';
+					ctx.textAlign = 'center';
+					ctx.fillText(Math.round(minDOrig), x, y - 5);
+				} else if (v1 == maxDOrig) {
+					ctx.font = '10px Comic Sans MS bold';
+					ctx.fillStyle = 'blue';
+					ctx.textAlign = 'center';
+					ctx.fillText(Math.round(maxDOrig), x, y + 10);
+				}
+			}
+
 			ctx.lineTo(x, y);
 		});
 
@@ -103,13 +118,9 @@ class Table extends React.Component {
 				let data = v.vHist.filter((v, i) => i < 4).reverse();
 				data.push(v.tvol);
 				let canvas = document.getElementById('v5d' + v.inscode);
-				this.Plot(
-					'v5d' + v.inscode.toString(),
-					data,
-					canvasMargin * canvas.height,
-					canvas.height / 2,
-					'#0000FF',
-				);
+				this.Plot('v5d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height / 2, {
+					color: '#0000FF',
+				});
 			});
 
 		//5d price
@@ -120,7 +131,9 @@ class Table extends React.Component {
 				let data = v.pClosingHist.filter((v, i) => i < 4).reverse();
 				data.push(v.pc);
 				let canvas = document.getElementById('v5d' + v.inscode);
-				this.Plot('v5d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#000000');
+				this.Plot('v5d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, {
+					color: '#000000',
+				});
 			});
 
 		//10d voloume
@@ -131,13 +144,9 @@ class Table extends React.Component {
 				let data = v.vHist.filter((v, i) => i < 9).reverse();
 				data.push(v.tvol);
 				let canvas = document.getElementById('v10d' + v.inscode);
-				this.Plot(
-					'v10d' + v.inscode.toString(),
-					data,
-					canvasMargin * canvas.height,
-					canvas.height / 2,
-					'#0000FF',
-				);
+				this.Plot('v10d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height / 2, {
+					color: '#0000FF',
+				});
 			});
 
 		//10d hist
@@ -148,7 +157,9 @@ class Table extends React.Component {
 				let data = v.pClosingHist.filter((v, i) => i < 9).reverse();
 				data.push(v.pc);
 				let canvas = document.getElementById('v10d' + v.inscode);
-				this.Plot('v10d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#000000');
+				this.Plot('v10d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, {
+					color: '#000000',
+				});
 			});
 
 		//30d volume
@@ -159,13 +170,9 @@ class Table extends React.Component {
 				let data = v.vHist.filter((v, i) => i < 29).reverse();
 				data.push(v.tvol);
 				let canvas = document.getElementById('v30d' + v.inscode);
-				this.Plot(
-					'v30d' + v.inscode.toString(),
-					data,
-					canvasMargin * canvas.height,
-					canvas.height / 2,
-					'#0000FF',
-				);
+				this.Plot('v30d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height / 2, {
+					color: '#0000FF',
+				});
 			});
 
 		//30d price
@@ -176,7 +183,9 @@ class Table extends React.Component {
 				let data = v.pClosingHist.filter((v, i) => i < 29).reverse();
 				data.push(v.pc);
 				let canvas = document.getElementById('v30d' + v.inscode);
-				this.Plot('v30d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#000000');
+				this.Plot('v30d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, {
+					color: '#000000',
+				});
 			});
 
 		allRows
@@ -186,13 +195,9 @@ class Table extends React.Component {
 				let data = v.vHist.filter((v, i) => i < 59).reverse();
 				data.push(v.tvol);
 				let canvas = document.getElementById('v60d' + v.inscode);
-				this.Plot(
-					'v60d' + v.inscode.toString(),
-					data,
-					canvasMargin * canvas.height,
-					canvas.height / 2,
-					'#0000FF',
-				);
+				this.Plot('v60d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height / 2, {
+					color: '#0000FF',
+				});
 			});
 
 		allRows
@@ -202,7 +207,9 @@ class Table extends React.Component {
 				let data = v.pClosingHist.filter((v, i) => i < 59).reverse();
 				data.push(v.pc);
 				let canvas = document.getElementById('v60d' + v.inscode);
-				this.Plot('v60d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#000000');
+				this.Plot('v60d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, {
+					color: '#000000',
+				});
 			});
 
 		allRows
@@ -212,13 +219,9 @@ class Table extends React.Component {
 				let data = v.vHist.filter((v, i) => i < 249).reverse();
 				data.push(v.tvol);
 				let canvas = document.getElementById('v360d' + v.inscode);
-				this.Plot(
-					'v360d' + v.inscode.toString(),
-					data,
-					canvasMargin * canvas.height,
-					canvas.height / 2,
-					'#0000FF',
-				);
+				this.Plot('v360d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height / 2, {
+					color: '#0000FF',
+				});
 			});
 
 		allRows
@@ -228,20 +231,25 @@ class Table extends React.Component {
 				let data = v.pClosingHist.filter((v, i) => i < 249).reverse();
 				data.push(v.pc);
 				let canvas = document.getElementById('v360d' + v.inscode);
-				this.Plot('v360d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#000000');
+				this.Plot('v360d' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, {
+					color: '#000000',
+				});
 			});
 
+		//hn
 		allRows
 			.filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
 			.filter(v => v.ctHist)
 			.forEach((v, i) => {
 				let data = v.ctHist
 					.map(v1 => v1.split(','))
-					.map(v2 => v2[1] - v2[3])
+					.map(v2 => v2[1])
 					.reverse();
 				data.push(v.ct.Buy_CountN);
 				let canvas = document.getElementById('hn' + v.inscode);
-				this.Plot('hn' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height);
+				this.Plot('hn' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, {
+					minMaxFlag: 1,
+				});
 			});
 
 		//hv
@@ -255,7 +263,9 @@ class Table extends React.Component {
 					.reverse();
 				data.push(v.ct.Buy_N_Volume);
 				let canvas = document.getElementById('hv' + v.inscode);
-				this.Plot('hv' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, '#003300');
+				this.Plot('hv' + v.inscode.toString(), data, canvasMargin * canvas.height, canvas.height, {
+					color: '#003300',
+				});
 			});
 
 		table = $('#table').DataTable({
@@ -403,19 +413,31 @@ class Table extends React.Component {
 														(Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0
 															? ((bgColor = '#ff6666'), (fgColor = 'white'))
 															: Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0
-																? ((bgColor = '#00ff00'), (fgColor = 'black'))
+																? ((bgColor = '#00ff00'), (fgColor = 'gray'))
 																: ((bgColor = '!important'), (fgColor = 'black')),
 														console.log('fgColor = ', fgColor))
 													}
-													<span
-														style={{
-															backgroundColor: bgColor,
-															width: '100%',
-															display: 'block',
-															color: fgColor,
-														}}>
-														{v.pc}
-													</span>
+													<div>
+														<span
+															style={{
+																margin: '0',
+																padding: '0 0 0 0px',
+																fontSize: '14px',
+															}}>
+															{v.pc}
+														</span>
+														<div
+															style={{
+																height: '2px',
+																backgroundColor: v.plp > 0 ? '#00ff00' : '#ff7777',
+																width:
+																	Math.abs(v.plp) * 20 * (v.flow == 4 ? 5 / 3 : 1) +
+																	'%',
+																display: 'block',
+																color: fgColor,
+															}}
+														/>
+													</div>
 												</td>
 											}
 											<td
@@ -496,18 +518,19 @@ class Table extends React.Component {
 												))
 											}
 											{
-												((t1 =
+												((index = allRows.findIndex(v1 => v1.l18 == v.l18)),
+												(t1 =
 													numeral(v.tvol)
 														.format('0a')
 														.toUpperCase()
 														.toString() + '\n\r'),
-												(t2 =
+												(allRows[index].av30 =
 													v && v.vHist
-														? numeral(v.vHist.slice(0, 30).reduce((p, c) => p + c, 0) / 30)
-																.format('0a')
-																.toUpperCase()
+														? v.vHist.slice(0, 30).reduce((p, c) => p + c, 0) / 30
 														: 0),
-												(v.av30 = t2),
+												(t2 = numeral(allRows[index].av30)
+													.format('0a')
+													.toUpperCase()),
 												(
 													<td
 														style={{
@@ -599,7 +622,7 @@ class Table extends React.Component {
 											}
 											{
 												<td
-													data-sort={v.mm ? v.mm : 0}
+													data-sort={v.mmY ? v.mmY : 0}
 													style={{
 														padding: '0 0 0 4px',
 														fontSize: '14px',

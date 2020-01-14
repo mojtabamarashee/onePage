@@ -18,7 +18,7 @@ import Badge from '@material-ui/core/Badge';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
-let kafeGheymat;
+let kafeGheymat, volumeMoreThan;
 
 filters.push({
 	exist: 0,
@@ -56,10 +56,9 @@ filters.push({
 				return true;
 			}
 			return false;
-		};
+		}
 	},
 });
-
 
 filters.push({
 	exist: 0,
@@ -71,7 +70,7 @@ filters.push({
 				return true;
 			}
 			return false;
-		};
+		}
 	},
 });
 
@@ -225,6 +224,22 @@ filters.push({
 				let r;
 				v.pc <= Math.min(...hist) ? (r = true) : (r = false);
 				return r;
+			}
+		}
+		return false;
+	},
+});
+
+filters.push({
+	exist: 0,
+	name: 'VolumeMoreThan',
+	func: (settings, data, dataIndex) => {
+		var v = allRows.find(v => v.l18 == data[0].split('___')[1]);
+		if (v && v.av30) {
+			if (v.tvol >= volumeMoreThan * v.av30) {
+				return true;
+			} else {
+				return false;
 			}
 		}
 		return false;
@@ -457,6 +472,21 @@ class Settings extends React.Component {
 			this.setState({searchResultNum: table.page.info().recordsDisplay});
 		} else {
 			filters.find(v => v.name == 'KafeGheymat').exist = 0;
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+			table.draw();
+			this.setState({searchResultNum: table.page.info().recordsDisplay});
+		}
+	};
+
+	VolumeMoreThanChanged = e => {
+		volumeMoreThan = e.target.value;
+		if (volumeMoreThan != 0) {
+			filters.find(v => v.name == 'VolumeMoreThan').exist = 1;
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+			table.draw();
+			this.setState({searchResultNum: table.page.info().recordsDisplay});
+		} else {
+			filters.find(v => v.name == 'VolumeMoreThan').exist = 0;
 			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
 			table.draw();
 			this.setState({searchResultNum: table.page.info().recordsDisplay});
@@ -814,6 +844,32 @@ class Settings extends React.Component {
 						</Typography>
 					}
 				/>
+
+				<p
+					style={{
+						clear: 'right',
+						margin: '0',
+					}}
+				/>
+				<div style={{float: 'right'}}>
+					<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{'حجم بیشتر از میانگین ماه'}</span>
+					<TextField
+						select
+						id="filled-select-currency"
+						inputProps={{
+							style: {
+								height: '5%',
+							},
+						}}
+						onChange={this.VolumeMoreThanChanged}
+						variant="filled">
+						{[0, 1, 2, 3, 4, 5, 10, 20, 30, 50, 100].map((value, i) => (
+							<MenuItem key={value} style={{height: '10%'}} value={value}>
+								{value.toString()}
+							</MenuItem>
+						))}
+					</TextField>
+				</div>
 			</div>
 		);
 	}
