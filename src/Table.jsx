@@ -2,6 +2,7 @@ import React from 'react';
 import './table.css';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
+import {Swing} from './Swing.jsx';
 let curRows = allRows,
 	url,
 	tableThis,
@@ -514,6 +515,20 @@ class Table extends React.Component {
 														}}
 														data-sort={dataSort}>
 														{numeral(((v.pmax - v.pmin) / v.pc) * 100).format()}
+														<p
+															style={{
+																clear: 'left',
+																margin: '0',
+															}}
+														/>
+														<Swing
+															data={{
+																minP: v.pmin,
+																maxP: v.pmax,
+																min: v.tmin,
+																max: v.tmax,
+															}}
+														/>
 													</td>
 												))
 											}

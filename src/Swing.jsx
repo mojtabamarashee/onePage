@@ -6,10 +6,21 @@ class Swing extends React.Component {
 	}
 
 	render() {
-		return(
-        <div style={{width:"100%"}}>
-            <div style={{margin : (minP - min) / (max - min) * 100 + '%', color:"red", width=(maxP - minP) / (max - min) * 100 + '%'}} >
-</div>
-        </div>)
+		let minP, maxP, min, max;
+		({minP, maxP, min, max} = this.props.data);
+		return (
+			<div style={{width: '100%', height: '5px'}}>
+				<div
+					style={{
+						margin: ((minP - min) / (max - min)) * 100 + '%',
+						backgroundColor: 'red',
+						width: minP < 0 ? (((maxP - minP) / (max - min)) * 100 + '%') : '0px',
+						height: '100%',
+					}}
+				/>
+			</div>
+		);
 	}
 }
+
+export {Swing};
