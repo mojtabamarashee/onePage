@@ -2,7 +2,6 @@ import React from 'react';
 import './table.css';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import {Swing} from './Swing.jsx';
 let curRows = allRows,
   url,
   tableThis,
@@ -634,15 +633,6 @@ class Table extends React.Component {
                                 style={{
                                   clear: 'left',
                                   margin: '0',
-                                }}
-                              />
-                              <Swing
-                                data={{
-                                  minP: v.pmin,
-                                  maxP: v.pmax,
-                                  min: v.tmin,
-                                  max: v.tmax,
-                                  name: v.l18,
                                 }}
                               />
                             </td>
