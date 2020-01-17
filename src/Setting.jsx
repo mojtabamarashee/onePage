@@ -237,7 +237,7 @@ filters.push({
       if (v.pClosingHist && v.pClosingHist[kafeGheymat]) {
         let hist = v.pClosingHist.slice(0, kafeGheymat);
         let r;
-        v.pc <= Math.min(...hist) ? (r = true) : (r = false);
+        v.pc <= Math.min(...hist) * 1.02 ? (r = true) : (r = false);
         return r;
       }
     }
@@ -291,8 +291,8 @@ filters.push({
   exist: 0,
   name: 'PriceLimit',
   func: (settings, data, dataIndex) => {
-    var p = parseFloat(data[1]) || 0;
-    if (p < priceMaxVal && p > priceMinVal) {
+    var p = allRows.find(v => v.name == data[0].split('___')[1]);
+    if (p.pc < priceMaxVal && p.pc > priceMinVal) {
       return true;
     }
     return false;
@@ -567,11 +567,17 @@ class Settings extends React.Component {
   };
 
   onChangeMinP = e => {
-    priceMinVal = e.target.value;
+    priceMinVal = Number(e.target.value);
+    $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+    table.draw();
+    this.setState({searchResultNum: table.page.info().recordsDisplay});
   };
 
   onChangeMaxP = e => {
-    priceMaxVal = e.target.value;
+    priceMaxVal = Number(e.target.value);
+    $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+    table.draw();
+    this.setState({searchResultNum: table.page.info().recordsDisplay});
   };
 
   render() {
@@ -591,164 +597,179 @@ class Settings extends React.Component {
           />
         </Badge>
         <br />
-        <table>
-          <tr>
-            <td>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={null}
-                    onChange={this.PEPos()}
-                    value="gilad"
-                    inputProps={{
-                      'aria-label': 'secondary checkbox',
-                    }}
-                    color="primary"
-                  />
-                }
-                label="P/E +"
-              />
-            </td>
-            <td>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={null}
-                    onChange={this.PESmallerThanSec()}
-                    value="gilad"
-                    inputProps={{
-                      'aria-label': 'secondary checkbox',
-                    }}
-                    color="primary"
-                  />
-                }
-                label="P/E < SecPE"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={null}
-                    onChange={this.PESmallerThanHalfSec()}
-                    value="gilad"
-                    inputProps={{
-                      'aria-label': 'secondary checkbox',
-                    }}
-                    color="primary"
-                  />
-                }
-                label="P/E < 0.5 * SecPE"
-              />
-            </td>
-            <td>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={null}
-                    onChange={this.RsiLessThan()}
-                    value="gilad"
-                    inputProps={{
-                      'aria-label': 'secondary checkbox',
-                    }}
-                    color="primary"
-                  />
-                }
-                label="RSI < 45"
-              />
-            </td>
-          </tr>
-        </table>
+        <div style={{float: 'right'}}>
+          <table>
+            <tr>
+              <td>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={null}
+                      onChange={this.PEPos()}
+                      value="gilad"
+                      inputProps={{
+                        'aria-label': 'secondary checkbox',
+                      }}
+                      color="primary"
+                    />
+                  }
+                  label="P/E +"
+                />
+              </td>
+              <td>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={null}
+                      onChange={this.PESmallerThanSec()}
+                      value="gilad"
+                      inputProps={{
+                        'aria-label': 'secondary checkbox',
+                      }}
+                      color="primary"
+                    />
+                  }
+                  label="P/E < SecPE"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={null}
+                      onChange={this.PESmallerThanHalfSec()}
+                      value="gilad"
+                      inputProps={{
+                        'aria-label': 'secondary checkbox',
+                      }}
+                      color="primary"
+                    />
+                  }
+                  label="P/E < 0.5 * SecPE"
+                />
+              </td>
+              <td>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={null}
+                      onChange={this.RsiLessThan()}
+                      value="gilad"
+                      inputProps={{
+                        'aria-label': 'secondary checkbox',
+                      }}
+                      color="primary"
+                    />
+                  }
+                  label="RSI < 45"
+                />
+              </td>
+            </tr>
+          </table>
+        </div>
         <br />
-        <TextField
-          select
-          label="Select"
-          id="filled-select-currency"
-          onChange={this.CsSelected}
-          helperText="Please select cs"
-          variant="filled">
-          {csName.map((value, i) => (
-            <MenuItem
-              key={value}
-              value={csNameOrig[i]}
-              style={{fontFamily: 'Courier New, Courier, monospace'}}>
-              {value.toString() +
-                ' (' +
-                allRows
-                  .filter((v, i) => v.l18.match(/^([^0-9]*)$/))
-                  .filter(v => v.csName == csNameOrig[i]).length +
-                ')'}
-            </MenuItem>
-          ))}
-        </TextField>
+        <p style={{clear: 'right'}} />
+        <p style={{clear: 'right'}} />
+        <div style={{float: 'right'}}>
+          <TextField
+            select
+            label="Select"
+            id="filled-select-currency"
+            onChange={this.CsSelected}
+            helperText="Please select cs"
+            style={{width: '300px'}}
+            variant="filled">
+            {csName.map((value, i) => (
+              <MenuItem
+                key={value}
+                value={csNameOrig[i]}
+                style={{fontFamily: 'Courier New, Courier, monospace'}}>
+                {value.toString() +
+                  ' (' +
+                  allRows
+                    .filter((v, i) => v.l18.match(/^([^0-9]*)$/))
+                    .filter(v => v.csName == csNameOrig[i]).length +
+                  ')'}
+              </MenuItem>
+            ))}
+          </TextField>
+        </div>
+        <br />
         <br />
 
-        <input
-          disabled={this.state.priceFilterEn ? '' : 'disabled'}
-          onChange={this.onChangeMinP}
-          type="text"
-          id="outlined-basic"
-          label="min"
-          variant="outlined"
-          style={{width: '70px'}}
-        />
+        <p style={{clear: 'right'}} />
+        <div style={{float: 'right'}}>
+          <input
+            disabled={this.state.priceFilterEn ? '' : 'disabled'}
+            onChange={this.onChangeMinP}
+            type="text"
+            id="outlined-basic"
+            label="min"
+            variant="outlined"
+            style={{width: '70px'}}
+          />
 
-        <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
-          {' < قیمت < '}
-        </span>
-        <input
-          disabled={this.state.priceFilterEn ? '' : 'disabled'}
-          onChange={this.onChangeMaxP}
-          type="text"
-          id="outlined-basic"
-          label="min"
-          variant="outlined"
-          style={{width: '70px'}}
-        />
-
-        <FormControlLabel
-          style={{margin: '0 0 0 20px'}}
-          control={
-            <Checkbox
-              checked={null}
-              onChange={this.PriceEn}
-              value="gilad"
-              inputProps={{
-                'aria-label': 'secondary checkbox',
-              }}
-              color="primary"
-            />
-          }
-          label="enable"
-        />
-        <br />
-        <br />
-        <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
-          {' کف قیمت '}
-        </span>
-        <TextField
-          select
-          id="filled-select-currency"
-          inputProps={{
-            style: {
-              height: '5%',
-            },
-          }}
-          onChange={this.KafeGheymatChanged}
-          variant="filled">
-          {[0, 2, 5, 10, 20, 30].map((value, i) => (
-            <MenuItem key={value} style={{height: '10%'}} value={value}>
-              {value.toString()}
-            </MenuItem>
-          ))}
-        </TextField>
-        <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
-          {' روزه '}
-        </span>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {' < قیمت < '}
+          </span>
+          <input
+            disabled={this.state.priceFilterEn ? '' : 'disabled'}
+            onChange={this.onChangeMaxP}
+            type="text"
+            id="outlined-basic"
+            label="min"
+            variant="outlined"
+            style={{width: '70px'}}
+          />
+          <FormControlLabel
+            style={{margin: '0 0 0 0px'}}
+            control={
+              <Checkbox
+                checked={null}
+                onChange={this.PriceEn}
+                value="gilad"
+                inputProps={{
+                  'aria-label': 'secondary checkbox',
+                }}
+                color="primary"
+              />
+            }
+            label="enable"
+          />
+        </div>
 
         <br />
+        <br />
+        <p style={{clear: 'right'}} />
+        <div style={{float: 'right'}}>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {' کف قیمت '}
+          </span>
+          <TextField
+            select
+            id="filled-select-currency"
+            inputProps={{
+              style: {
+                height: '5%',
+              },
+            }}
+            onChange={this.KafeGheymatChanged}
+            variant="filled">
+            {[0, 2, 5, 10, 20, 30].map((value, i) => (
+              <MenuItem key={value} style={{height: '10%'}} value={value}>
+                {value.toString()}
+              </MenuItem>
+            ))}
+          </TextField>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {' روزه '}
+          </span>
+        </div>
+
+        <br />
+        <p style={{clear: 'right'}} />
         <table style={{float: 'right'}}>
           <tr>
             <td>
@@ -928,7 +949,7 @@ class Settings extends React.Component {
         />
         <div style={{float: 'right'}}>
           <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
-            {'حجم بیشتر از میانگین ماه'}
+            {'حجم بیشتر از'}
           </span>
           <TextField
             select
@@ -939,19 +960,23 @@ class Settings extends React.Component {
               },
             }}
             onChange={this.VolumeMoreThanChanged}
+            style={{margin: '5px'}}
             variant="filled">
             {[0, 1, 2, 3, 4, 5, 10, 20, 30, 50, 100].map((value, i) => (
-              <MenuItem key={value} style={{height: '10%'}} value={value}>
+              <MenuItem key={value} style={{height: 'px'}} value={value}>
                 {value.toString()}
               </MenuItem>
             ))}
           </TextField>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {'برابر  میانگن ماه'}
+          </span>
         </div>
 
         <p style={{clear: 'right'}} />
         <div style={{float: 'right'}}>
           <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
-            {'ثابت'}
+            {'قیمت پایانی مساوی میانگین'}
           </span>
           <TextField
             select
@@ -961,14 +986,18 @@ class Settings extends React.Component {
                 height: '5%',
               },
             }}
+            style={{margin: '5px'}}
             onChange={this.Dargir}
             variant="filled">
-            {[10, 20, 30, 50, 100, 250].map((value, i) => (
-              <MenuItem key={value} style={{height: '10%'}} value={value}>
+            {[10, 20, 30, 50, 100, 150, , 200, 250].map((value, i) => (
+              <MenuItem key={value} style={{margin: '5px'}} value={value}>
                 {value.toString()}
               </MenuItem>
             ))}
           </TextField>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {'روز قبل'}
+          </span>
         </div>
       </div>
     );

@@ -2,6 +2,7 @@ import React from 'react';
 import './table.css';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
+import {SymbolPage} from './SymbolPage.jsx';
 let curRows = allRows,
   url,
   tableThis,
@@ -493,7 +494,12 @@ class Table extends React.Component {
                   (v, i) => (
                     (stylee = {color: v.color}),
                     (
-                      <tr key={v.l30}>
+                      <tr 
+                        
+                            onClick={(e) => (
+                              alert('test' + e)
+                            )}
+                        key={v.l30}>
                         {
                           <td
                             data-search={v.l30 + '___' + v.name}
