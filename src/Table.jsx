@@ -3,6 +3,7 @@ import './table.css';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import {Swing} from './Swing.jsx';
+import {Link} from 'react-router-dom';
 let curRows = allRows,
 	url,
 	tableThis,
@@ -402,7 +403,7 @@ class Table extends React.Component {
 														style={{
 															fontWeight: 'bold',
 														}}>
-														{v.name}
+														<Link to={'/' + v.name}> {v.name}</Link>
 													</span>
 													<p
 														style={{
@@ -519,14 +520,6 @@ class Table extends React.Component {
 															style={{
 																clear: 'left',
 																margin: '0',
-															}}
-														/>
-														<Swing
-															data={{
-																minP: v.pmin,
-																maxP: v.pmax,
-																min: v.tmin,
-																max: v.tmax,
 															}}
 														/>
 													</td>
