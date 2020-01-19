@@ -274,9 +274,6 @@ filters.push({
           .filter((v, i) => i < dargir)
           .reverse()
           .reduce((p, c) => p + c, 0) / dargir;
-      if (v.name == 'وملی') {
-        console.log('avg = ', avg);
-      }
       if (v.pc <= avg + 0.02 * v.pc) {
         return true;
       } else {
