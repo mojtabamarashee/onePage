@@ -989,7 +989,7 @@ class Settings extends React.Component {
             style={{margin: '5px'}}
             onChange={this.Dargir}
             variant="filled">
-            {[10, 20, 30, 50, 100, 150, , 200, 250].map((value, i) => (
+            {[0, 10, 20, 30, 50, 100, 150, 200, 250].map((value, i) => (
               <MenuItem key={value} style={{margin: '5px'}} value={value}>
                 {value.toString()}
               </MenuItem>

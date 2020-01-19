@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-<<<<<<< HEAD
 class SymbolPage extends React.Component {
 	constructor(props) {
 		super(props);
@@ -22,16 +21,4 @@ class SymbolPage extends React.Component {
 	}
 }
 
-=======
-
-class SymbolPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-  render() {
-    return <h1>hi</h1>;
-  }
-}
->>>>>>> 04c9568e20b30896958a7161000f373239fa3381
 export {SymbolPage};
