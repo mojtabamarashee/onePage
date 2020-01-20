@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {Settings} from './Setting.jsx';
 import {Main} from './Main.jsx';
 import {SymbolPage} from './SymbolPage.jsx';
-import {Route, Link, BrowserRouter as Router} from 'react-router-dom';
+import {Route, Link, HashRouter as Router} from 'react-router-dom';
 
 const Routing = (
 	<Router>
