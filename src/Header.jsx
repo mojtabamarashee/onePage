@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Badge from '@material-ui/core/Badge';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faToggleOn, faToggleOff} from '@fortawesome/free-solid-svg-icons';
+import {faToggleOn, faToggleOff, faCog} from '@fortawesome/free-solid-svg-icons';
 import {faFilter} from '@fortawesome/free-solid-svg-icons';
 import {faQuestionCircle} from '@fortawesome/free-solid-svg-icons';
 import {Table, table} from './Table.jsx';
@@ -18,7 +18,7 @@ class Header extends React.Component {
 				<Badge badgeContent={this.props.badge} color="primary">
 					<FontAwesomeIcon
 						style={{margin: '10px 0 5px 0'}}
-						onClick={() => this.props.ChangeMode('settings')}
+						onClick={() => this.props.ChangeMode('filter')}
 						icon={faFilter}
 						size="3x"
 						color={this.props.filtersEn ? 'lightBlue' : 'gray'}
@@ -63,6 +63,13 @@ class Header extends React.Component {
 					style={{margin: '0 0 5px 0', float: 'right'}}
 					onClick={() => this.props.ChangeMode('help')}
 					icon={faQuestionCircle}
+					size="2x"
+					color="lightBlue"
+				/>
+				<FontAwesomeIcon
+					style={{margin: '0 10px 0 0', float: 'right'}}
+					onClick={() => this.props.ChangeMode('setting')}
+					icon={faCog}
 					size="2x"
 					color="lightBlue"
 				/>

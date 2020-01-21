@@ -296,7 +296,7 @@ filters.push({
   },
 });
 
-class Settings extends React.Component {
+class Filter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -1000,4 +1000,4 @@ class Settings extends React.Component {
     );
   }
 }
-export {Settings, filters};
+export {Filter, filters};

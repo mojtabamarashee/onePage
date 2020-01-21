@@ -17,7 +17,8 @@ let curRows = allRows,
 	bgColor,
 	fgColor,
 	width,
-	index;
+	index,
+	backgroundColor;
 var numeral = require('numeral');
 let canvasMargin = 0.05;
 numeral.defaultFormat('0,0.[00]');
@@ -25,6 +26,18 @@ const CANVAS_WIDTH = '70px';
 const CANVAS_HEIGHT = '23px';
 const Scale = (num, in_min, in_max, out_min, out_max) => {
 	return Math.round(((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min);
+};
+
+const LoadPortfo = () => {
+    try {
+        const serializedState = localStorage.getItem("portfo");
+        if(serializedState === null){
+            return undefined;
+        }
+        return JSON.parse(serializedState);
+    } catch (err) {
+        return undefined;
+    }
 };
 
 class Table extends React.Component {
@@ -345,6 +358,8 @@ class Table extends React.Component {
 		const blackColor = {color: 'black'};
 		let stylee, bgColor, color, num, secAvg;
 		this.GetCurRows();
+        let portfo = LoadPortfo();
+        console.log("portfo = ", portfo);
 
 		let maxI;
 		if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -390,57 +405,66 @@ class Table extends React.Component {
 									(
 										<tr onClick={e => alert('test' + e)} key={v.l30}>
 											{
-												<td
-													data-search={v.l30 + '___' + v.name}
-													style={{
-														margin: '0',
-														padding: '0 0 0 4px',
-														fontSize: '14px',
-														whiteSpace: 'nowrap',
-														overflow: 'hidden',
-													}}>
-													<span
+												(portfo && portfo.symbols && portfo.symbols.find(v1=>v1 == v.name) 
+													? ((backgroundColor = 'lightYellow'),
+													  console.log('backgroundColor = ', backgroundColor))
+													: (backgroundColor = '!important'),
+												(
+													<td
+														data-search={v.l30 + '___' + v.name}
 														style={{
-															fontWeight: 'bold',
-														}}>
-														<Link to={'/' + v.name}>{v.name}</Link>
-													</span>
-													<p
-														style={{
-															clear: 'left',
 															margin: '0',
-														}}
-													/>
-													{
-														(Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0
-															? ((bgColor = '#ff6666'), (fgColor = 'white'))
-															: Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0
-																? ((bgColor = '#00ff00'), (fgColor = 'gray'))
-																: ((bgColor = '!important'), (fgColor = 'black')),
-														console.log('fgColor = ', fgColor))
-													}
-													<div>
+															padding: '0 0 0 4px',
+															fontSize: '14px',
+															whiteSpace: 'nowrap',
+															overflow: 'hidden',
+															backgroundColor: backgroundColor,
+														}}>
 														<span
 															style={{
-																margin: '0',
-																padding: '0 0 0 0px',
-																fontSize: '14px',
+																fontWeight: 'bold',
 															}}>
-															{v.pc}
+															<Link to={'/' + v.name}>{v.name}</Link>
 														</span>
-														<div
+														<p
 															style={{
-																height: '2px',
-																backgroundColor: v.plp > 0 ? '#00ff00' : '#ff7777',
-																width:
-																	Math.abs(v.plp) * 20 * (v.flow == 4 ? 5 / 3 : 1) +
-																	'%',
-																display: 'block',
-																color: fgColor,
+																clear: 'left',
+																margin: '0',
 															}}
 														/>
-													</div>
-												</td>
+														{
+															(Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0
+																? ((bgColor = '#ff6666'), (fgColor = 'white'))
+																: Math.round(v.pd1) == Math.round(v.tmax) && v.qd1 > 0
+																	? ((bgColor = '#00ff00'), (fgColor = 'gray'))
+																	: ((bgColor = '!important'), (fgColor = 'black')),
+															console.log('fgColor = ', fgColor))
+														}
+														<div>
+															<span
+																style={{
+																	margin: '0',
+																	padding: '0 0 0 0px',
+																	fontSize: '14px',
+																}}>
+																{v.pc}
+															</span>
+															<div
+																style={{
+																	height: '2px',
+																	backgroundColor: v.plp > 0 ? '#00ff00' : '#ff7777',
+																	width:
+																		Math.abs(v.plp) *
+																			20 *
+																			(v.flow == 4 ? 5 / 3 : 1) +
+																		'%',
+																	display: 'block',
+																	color: fgColor,
+																}}
+															/>
+														</div>
+													</td>
+												))
 											}
 											<td
 												data-sort={v.pe || 0}

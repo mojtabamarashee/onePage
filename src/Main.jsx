@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Settings, filters} from './Setting.jsx';
+import {Filter, filters} from './Filter.jsx';
 import {Header} from './Header.jsx';
 import {Help} from './Help.jsx';
+import {Setting} from './Settings.jsx';
 import {Table, table} from './Table.jsx';
 
-let settingStyle, tableStyle, helpStyle;
+let filterStyle, tableStyle, helpStyle, settingStyle;
 
 class Main extends React.Component {
 	constructor(props) {
@@ -22,26 +23,28 @@ class Main extends React.Component {
 				$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
 			}
 			this.setState({mode: mode}, () => table.draw());
-		} else if (mode == 'settings') {
+		} else if (mode == 'filter') {
 			this.setState({mode: mode});
 		} else if (mode == 'help') {
 			this.setState({mode: mode});
+		} else if (mode == 'setting') {
+			this.setState({mode: mode}, () => console.log(mode));
 		}
 	};
 
 	SetStyles = mode => {
+		filterStyle = {display: 'none'};
+		tableStyle = {display: 'none'};
+		helpStyle = {display: 'none'};
+		settingStyle = {display: 'none'};
 		if (mode == 'table') {
-			settingStyle = {display: 'none'};
 			tableStyle = {display: 'block'};
-			helpStyle = {display: 'none'};
-		} else if (mode == 'settings') {
-			tableStyle = {display: 'none'};
-			settingStyle = {display: 'block'};
-			helpStyle = {display: 'none'};
+		} else if (mode == 'filter') {
+			filterStyle = {display: 'block'};
 		} else if (mode == 'help') {
-			tableStyle = {display: 'none'};
-			settingStyle = {display: 'none'};
 			helpStyle = {display: 'block'};
+		} else if (mode == 'setting') {
+			settingStyle = {display: 'block'};
 		}
 	};
 
@@ -72,11 +75,14 @@ class Main extends React.Component {
 					/>
 					<Table />
 				</div>
-				<div style={settingStyle}>
-					<Settings ChangeMode={this.ChangeMode} />
+				<div style={filterStyle}>
+					<Filter ChangeMode={this.ChangeMode} />
 				</div>
 				<div style={helpStyle}>
 					<Help ChangeMode={this.ChangeMode} />
+				</div>
+				<div style={settingStyle}>
+					<Setting ChangeMode={this.ChangeMode} />
 				</div>
 			</div>
 		);
