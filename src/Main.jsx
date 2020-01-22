@@ -4,9 +4,10 @@ import {Filter, filters} from './Filter.jsx';
 import {Header} from './Header.jsx';
 import {Help} from './Help.jsx';
 import {Setting} from './Settings.jsx';
+import {Instruments} from './Instruments.js';
 import {Table, table} from './Table.jsx';
 
-let filterStyle, tableStyle, helpStyle, settingStyle;
+let filterStyle, tableStyle, helpStyle, settingStyle, instruStyle;
 
 class Main extends React.Component {
 	constructor(props) {
@@ -29,6 +30,8 @@ class Main extends React.Component {
 			this.setState({mode: mode});
 		} else if (mode == 'setting') {
 			this.setState({mode: mode}, () => console.log(mode));
+		} else if (mode == 'instru') {
+			this.setState({mode: mode}, () => console.log(mode));
 		}
 	};
 
@@ -36,6 +39,7 @@ class Main extends React.Component {
 		filterStyle = {display: 'none'};
 		tableStyle = {display: 'none'};
 		helpStyle = {display: 'none'};
+		instruStyle = {display: 'none'};
 		settingStyle = {display: 'none'};
 		if (mode == 'table') {
 			tableStyle = {display: 'block'};
@@ -45,6 +49,8 @@ class Main extends React.Component {
 			helpStyle = {display: 'block'};
 		} else if (mode == 'setting') {
 			settingStyle = {display: 'block'};
+		} else if (mode == 'instru') {
+			instruStyle = {display: 'block'};
 		}
 	};
 
@@ -83,6 +89,9 @@ class Main extends React.Component {
 				</div>
 				<div style={settingStyle}>
 					<Setting ChangeMode={this.ChangeMode} />
+				</div>
+				<div style={instruStyle}>
+					<Instruments ChangeMode={this.ChangeMode} />
 				</div>
 			</div>
 		);

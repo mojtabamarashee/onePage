@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import {SymbolPage} from './SymbolPage.jsx';
 import {Link} from 'react-router-dom';
+import {instHistory} from 'react-router-dom';
 let curRows = allRows,
 	url,
 	tableThis,

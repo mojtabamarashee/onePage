@@ -59,6 +59,22 @@ class Header extends React.Component {
 					}}>
 					{date}
 				</span>
+
+				<span
+
+                onClick = {()=>this.props.ChangeMode('instru')}
+					style={{
+						fontSize: '14px',
+						whiteSpace: 'nowrap',
+						overflow: 'hidden',
+						fontFamily: 'Courier New, Courier, monospace',
+						fontWeight: 'bold',
+						margin: '0 0 0 40px',
+						background: 'yellow',
+						padding: '7px',
+					}}>
+					صنایع
+				</span>
 				<FontAwesomeIcon
 					style={{margin: '0 0 5px 0', float: 'right'}}
 					onClick={() => this.props.ChangeMode('help')}
