@@ -517,11 +517,7 @@ class Table extends React.Component {
                           (portfo &&
                           portfo.symbols &&
                           portfo.symbols.find(v1 => v1 == v.name)
-                            ? ((backgroundColor = 'lightYellow'),
-                              console.log(
-                                'backgroundColor = ',
-                                backgroundColor,
-                              ))
+                            ? (backgroundColor = 'lightYellow')
                             : (backgroundColor = '!important'),
                           (
                             <td
@@ -555,7 +551,7 @@ class Table extends React.Component {
                                   ? ((bgColor = '#00ff00'), (fgColor = 'gray'))
                                   : ((bgColor = '!important'),
                                     (fgColor = 'black')),
-                                console.log('fgColor = ', fgColor))
+                                console.log(''))
                               }
                               <div>
                                 <span

@@ -82,6 +82,7 @@ class Header extends React.Component {
           color={grey[800]}
         />
         <PieChartIcon
+          onClick={() => this.props.ChangeMode('portfo')}
           style={{
             margin: '0 10px 0 0',
             fontSize: '33',
