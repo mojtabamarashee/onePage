@@ -69,7 +69,9 @@ class Setting extends React.Component {
                 var ws = wb.Sheets[wb.SheetNames[0]];
                 var data = XLSX.utils.sheet_to_json(ws, {raw: true, header: 1});
 
-                portfoo.symbols = data.map(v => v[0]);
+                data.shift();
+                portfoo = data.map(v => ({symbol: v[0], num: v[1]}));
+
                 this.SavePortfo(portfoo);
               } catch (e) {
                 this.setState({portfoSnakebarError: true});
@@ -78,7 +80,7 @@ class Setting extends React.Component {
             e.target.value = '';
           }}
         />
-		
+
         <label htmlFor="raised-button-file">
           <Button
             variant="raised"
@@ -87,20 +89,31 @@ class Setting extends React.Component {
             Upload portfo (excel)
           </Button>
         </label>
-		
-		 <br />
+
         <br />
-		<div dir="RTL">
-        <ul dir="RTL" className='b' style={{textAlign: 'right'}}>
-<li>در حال حاضر تنها وارد کردن پورتفو از کارگزاری مفید ممکن است.</li>
-        
-<li >برای این منظور ابتدا از سایت <a href="https://onlineplus.mofidonline.com/Home/RealtimePortfolioAdvanced"> modifonline</a> در قسمت پورتفو فایل اکسل پورتفو خود را دانلود کنید و آن را وارد کنید.</li>
-<li>پس از وارد کردن پورتفو صفحه را رفرش کنید.</li>
-<li>پورتفو در مرورگر خودتان ذخیره می شود بنابراین نیاز نیست هر بار این کار را انجام دهید.</li>
+        <br />
+        <div dir="RTL">
+          <ul dir="RTL" className="b" style={{textAlign: 'right'}}>
+            <li>
+              در حال حاضر تنها وارد کردن پورتفو از کارگزاری مفید ممکن است.
+            </li>
 
-        </ul>
-		</div>
-
+            <li>
+              برای این منظور ابتدا از سایت{' '}
+              <a href="https://onlineplus.mofidonline.com/Home/RealtimePortfolioAdvanced">
+                {' '}
+                modifonline
+              </a>{' '}
+              در قسمت پورتفو فایل اکسل پورتفو خود را دانلود کنید و آن را وارد
+              کنید.
+            </li>
+            <li>پس از وارد کردن پورتفو صفحه را رفرش کنید.</li>
+            <li>
+              پورتفو در مرورگر خودتان ذخیره می شود بنابراین نیاز نیست هر بار این
+              کار را انجام دهید.
+            </li>
+          </ul>
+        </div>
 
         <Snackbar
           open={this.state.portfoSnakebarSuccess}
@@ -111,8 +124,8 @@ class Setting extends React.Component {
             variant="filled"
             severity="success"
             onClose={this.handleClose}>
-            {portfoo.symbols
-              ? portfoo.symbols.length + ' symbols imported'
+            {portfoo
+              ? portfoo.length + ' symbols imported'
               : null}
           </MuiAlert>
         </Snackbar>

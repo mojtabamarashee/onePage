@@ -19,7 +19,7 @@ let curRows = allRows,
   fgColor,
   width,
   index,
-  backgroundColor;
+  backgroundColor, portfo;
 var numeral = require('numeral');
 let canvasMargin = 0.05;
 numeral.defaultFormat('0,0.[00]');
@@ -463,7 +463,7 @@ class Table extends React.Component {
     const blackColor = {color: 'black'};
     let stylee, bgColor, color, num, secAvg;
     this.GetCurRows();
-    let portfo = LoadPortfo();
+    portfo = LoadPortfo();
     console.log('portfo = ', portfo);
 
     let maxI;
@@ -1064,4 +1064,4 @@ class Table extends React.Component {
   }
 }
 
-export {Table, curRows, tableThis, table, columns};
+export {Table, curRows, tableThis, table, columns, portfo};

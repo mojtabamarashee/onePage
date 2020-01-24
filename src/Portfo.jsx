@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import MaterialTable from 'material-table';
+import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import {forwardRef} from 'react';
+console.log('portfo2 = ', portfo);
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -18,12 +21,28 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import {makeStyles} from '@material-ui/core/styles';
+
+const LoadPortfo = () => {
+  try {
+    const serializedState = localStorage.getItem('portfo');
+    if (serializedState === null) {
+      return undefined;
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    return undefined;
+  }
+};
+let portfo = LoadPortfo();
+console.log('portfo3 = ', portfo);
 
 class Portfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
+
   render() {
     let v = this.props.v;
 
@@ -62,32 +81,69 @@ class Portfo extends React.Component {
     };
 
     return (
-      <MaterialTable
-        icons={tableIcons}
-        title="Basic Sorting Preview"
-        columns={[
-          {title: 'Name', field: 'name'},
-          {title: 'Surname', field: 'surname'},
-          {title: 'Birth Year', field: 'birthYear', type: 'numeric'},
-          {
-            title: 'Birth Place',
-            field: 'birthCity',
-            lookup: {34: 'İstanbul', 63: 'Şanlıurfa'},
-          },
-        ]}
-        data={[
-          {name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63},
-          {
-            name: 'Zerya Betül',
-            surname: 'Baran',
-            birthYear: 2017,
-            birthCity: 34,
-          },
-        ]}
-        options={{
-          sorting: true,
-        }}
-      />
+      <div>
+        <FontAwesomeIcon
+          onClick={() => this.props.ChangeMode('table')}
+          calssName={'mr-3'}
+          icon={faLongArrowAltLeft}
+          size="4x"
+          color="black"
+        />
+        <br />
+        <br />
+        <MaterialTable
+          icons={tableIcons}
+          title="Basic Portfo"
+          columns={[
+            {
+              title: 'نماد',
+              field: 'symbol',
+              cellStyle: {
+                backgroundColor: '#039be5',
+                color: '#FFF',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                position: 'sticky',
+                left: '0',
+                zIndex: '999',
+              },
+              headerStyle: {
+                backgroundColor: '#039be5',
+                fontFamily: 'Courier New, Courier, monospace',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                position: 'sticky',
+                left: '0',
+                zIndex: '999',
+              },
+            },
+            {title: 'تعداد', field: 'num'},
+            {title: 'نماد', field: 'test2'},
+            {title: 'نماد', field: 'test3'},
+            {title: 'تعداد', field: 'test4'},
+            {title: 'تعداد', field: 'test5'},
+            {title: 'تعداد', field: 'test6'},
+            {title: 'تعداد', field: 'test7'},
+            {title: 'تعداد', field: 'test8'},
+          ]}
+          data={
+            portfo && portfo.length > 1
+              ? portfo.map((row, i) => ({
+                  symbol: row.symbol,
+                  num: row.num,
+                }))
+              : [{symbol: 'Nan', num: 'Nan'}]
+          }
+          options={{
+            sorting: true,
+            pageSize: 10,
+            headerStyle: {
+              backgroundColor: '#01579b',
+              color: '#FFF',
+            },
+          }}
+        />
+      </div>
     );
   }
 }
