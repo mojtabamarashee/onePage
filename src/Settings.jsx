@@ -6,67 +6,131 @@ import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import * as XLSX from '../node_modules/xlsx/dist/xlsx.min.js';
 import {table} from './Table.jsx';
-var portfoo = {test : 1};
+import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+import {makeStyles} from '@material-ui/core/styles';
+import './settings.css';
 
-const SavePortfo = portfo => {
-	console.log('porfo5 = ', portfo);
-	try {
-		console.log('portfo1 = ', portfo);
-		const serializedState = JSON.stringify(portfo);
-		console.log('serializedState = ', serializedState);
-		localStorage.setItem('portfo', serializedState);
-	} catch (err) {
-		console.log('portfo4 = ', portfo);
-		return undefined;
-	}
-};
+var portfoo = {test: 1};
 
 class Setting extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-	render() {
-		return (
-			<div>
-				<FontAwesomeIcon
-					onClick={() => this.props.ChangeMode('table')}
-					calssName={'mr-3'}
-					icon={faLongArrowAltLeft}
-					size="4x"
-					color="black"
-				/>
-				<br />
-				<br />
-				<input
-					accept=".xls,.xlsx"
-					style={{display: 'none'}}
-					id="raised-button-file"
-					multiple
-					type="file"
-					onChange={e => {
-						var file = e.target.files[0];
-						const reader = new FileReader();
-						reader.readAsArrayBuffer(file);
-						reader.onload = e => {
-							var data = new Uint8Array(e.target.result);
-							var wb = XLSX.read(data, {type: 'array'});
-							var ws = wb.Sheets[wb.SheetNames[0]];
-							var data = XLSX.utils.sheet_to_json(ws, {raw: true, header: 1});
-                            
-							portfoo.symbols = data.map(v => v[0]);
-							console.log('portfo2 = ', portfoo);
-							SavePortfo(portfoo);
-						};
-					}}
-				/>
-				<label htmlFor="raised-button-file">
-					<Button variant="raised" component="span" style={{backgroundColor: '#007bff', color: 'white'}}>
-						Upload portfo (excel)
-					</Button>
-				</label>
-			</div>
-		);
-	}
+  constructor(props) {
+    super(props);
+    this.state = {portfoSnakebarSuccess: false, portfoSnakebarError: false};
+  }
+
+  SavePortfo = portfo => {
+    try {
+      const serializedState = JSON.stringify(portfo);
+      console.log('serializedState = ', serializedState);
+      localStorage.setItem('portfo', serializedState);
+      this.setState({portfoSnakebarSuccess: true});
+    } catch (err) {
+      console.log('portfo4 = ', portfo);
+      this.setState({portfoSnakebarError: true});
+      return undefined;
+    }
+  };
+
+  handleClose = (event, reason) => {
+    console.log('reason = ', reason);
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.setState({portfoSnakebarSuccess: false, portfoSnakebarError: false});
+  };
+
+  render() {
+    return (
+      <div>
+        <FontAwesomeIcon
+          onClick={() => this.props.ChangeMode('table')}
+          calssName={'mr-3'}
+          icon={faLongArrowAltLeft}
+          size="4x"
+          color="black"
+        />
+        <br />
+        <br />
+        <input
+          accept=".xls,.xlsx"
+          style={{display: 'none'}}
+          id="raised-button-file"
+          multiple
+          type="file"
+          onChange={e => {
+            var file = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file);
+            reader.onload = e => {
+              try {
+                var data = new Uint8Array(e.target.result);
+                var wb = XLSX.read(data, {type: 'array'});
+                var ws = wb.Sheets[wb.SheetNames[0]];
+                var data = XLSX.utils.sheet_to_json(ws, {raw: true, header: 1});
+
+                portfoo.symbols = data.map(v => v[0]);
+                this.SavePortfo(portfoo);
+              } catch (e) {
+                this.setState({portfoSnakebarError: true});
+              }
+            };
+            e.target.value = '';
+          }}
+        />
+		
+        <label htmlFor="raised-button-file">
+          <Button
+            variant="raised"
+            component="span"
+            style={{backgroundColor: '#007bff', color: 'white'}}>
+            Upload portfo (excel)
+          </Button>
+        </label>
+		
+		 <br />
+        <br />
+		<div dir="RTL">
+        <ul dir="RTL" className='b' style={{textAlign: 'right'}}>
+<li>در حال حاضر تنها وارد کردن پورتفو از کارگزاری مفید ممکن است.</li>
+        
+<li >برای این منظور ابتدا از سایت <a href="https://onlineplus.mofidonline.com/Home/RealtimePortfolioAdvanced"> modifonline</a> در قسمت پورتفو فایل اکسل پورتفو خود را دانلود کنید و آن را وارد کنید.</li>
+<li>پس از وارد کردن پورتفو صفحه را رفرش کنید.</li>
+<li>پورتفو در مرورگر خودتان ذخیره می شود بنابراین نیاز نیست هر بار این کار را انجام دهید.</li>
+
+        </ul>
+		</div>
+
+
+        <Snackbar
+          open={this.state.portfoSnakebarSuccess}
+          autoHideDuration={3000}
+          onClose={this.handleClose}>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            severity="success"
+            onClose={this.handleClose}>
+            {portfoo.symbols
+              ? portfoo.symbols.length + ' symbols imported'
+              : null}
+          </MuiAlert>
+        </Snackbar>
+
+        <Snackbar
+          open={this.state.portfoSnakebarError}
+          autoHideDuration={3000}
+          onClose={this.handleClose}>
+          <MuiAlert
+            elevation={6}
+            variant="filled"
+            severity="error"
+            onClose={this.handleClose}>
+            Error
+          </MuiAlert>
+        </Snackbar>
+      </div>
+    );
+  }
 }
 export {Setting};
