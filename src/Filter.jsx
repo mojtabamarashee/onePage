@@ -594,14 +594,13 @@ class Filter extends React.Component {
           />
         </Badge>
         <br />
-        <div style={{float: 'right'}}>
-          <table>
+        <div dir="RTL">
+          <table style={{float:"right"}}>
             <tr>
               <td>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={null}
                       onChange={this.PEPos()}
                       value="gilad"
                       inputProps={{
@@ -617,7 +616,6 @@ class Filter extends React.Component {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={null}
                       onChange={this.PESmallerThanSec()}
                       value="gilad"
                       inputProps={{
@@ -635,7 +633,6 @@ class Filter extends React.Component {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={null}
                       onChange={this.PESmallerThanHalfSec()}
                       value="gilad"
                       inputProps={{
@@ -651,7 +648,6 @@ class Filter extends React.Component {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      checked={null}
                       onChange={this.RsiLessThan()}
                       value="gilad"
                       inputProps={{
@@ -724,7 +720,6 @@ class Filter extends React.Component {
             style={{margin: '0 0 0 0px'}}
             control={
               <Checkbox
-                checked={null}
                 onChange={this.PriceEn}
                 value="gilad"
                 inputProps={{
@@ -773,7 +768,6 @@ class Filter extends React.Component {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={null}
                     onChange={this.SafeKharid()}
                     value="gilad"
                     inputProps={{
@@ -794,7 +788,6 @@ class Filter extends React.Component {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={null}
                     onChange={this.SafeKharidNabashad()}
                     value="gilad"
                     inputProps={{
@@ -817,7 +810,6 @@ class Filter extends React.Component {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={null}
                     onChange={this.SafeForoush()}
                     value="gilad"
                     inputProps={{
@@ -838,7 +830,6 @@ class Filter extends React.Component {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={null}
                     onChange={this.SafeForoushNabashad()}
                     value="gilad"
                     inputProps={{
@@ -862,7 +853,6 @@ class Filter extends React.Component {
           style={{float: 'right'}}
           control={
             <Checkbox
-              checked={null}
               onChange={this.GhodrateKharidarBishtar()}
               value="gilad"
               inputProps={{
@@ -882,7 +872,6 @@ class Filter extends React.Component {
           style={{float: 'right'}}
           control={
             <Checkbox
-              checked={null}
               onChange={this.PayaniPos()}
               value="gilad"
               inputProps={{
@@ -902,7 +891,6 @@ class Filter extends React.Component {
           style={{float: 'right'}}
           control={
             <Checkbox
-              checked={null}
               onChange={this.PayaniNeg()}
               value="gilad"
               inputProps={{
@@ -922,7 +910,6 @@ class Filter extends React.Component {
           style={{float: 'right'}}
           control={
             <Checkbox
-              checked={null}
               onChange={this.NoSandugh()}
               value="gilad"
               inputProps={{
