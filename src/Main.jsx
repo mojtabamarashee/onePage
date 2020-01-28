@@ -8,7 +8,7 @@ import {Instruments} from './Instruments.js';
 import {Portfo} from './Portfo.jsx';
 import {Table, table} from './Table.jsx';
 
-let filterStyle, tableStyle, helpStyle, settingStyle, instruStyle, portfoStyle;
+let filterStyle, tableStyle, helpStyle, settingStyle, instrumentStyle, portfoStyle;
 
 class Main extends React.Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class Main extends React.Component {
       this.setState({mode: mode});
     } else if (mode == 'setting') {
       this.setState({mode: mode}, () => console.log(mode));
-    } else if (mode == 'instru') {
+    } else if (mode == 'instrument') {
       this.setState({mode: mode}, () => console.log(mode));
     } else if (mode == 'portfo') {
       this.setState({mode: mode}, () => console.log(mode));
@@ -44,7 +44,7 @@ class Main extends React.Component {
     filterStyle = {display: 'none'};
     tableStyle = {display: 'none'};
     helpStyle = {display: 'none'};
-    instruStyle = {display: 'none'};
+    instrumentStyle = {display: 'none'};
     settingStyle = {display: 'none'};
     portfoStyle = {display: 'none'};
 
@@ -56,8 +56,8 @@ class Main extends React.Component {
       helpStyle = {display: 'block'};
     } else if (mode == 'setting') {
       settingStyle = {display: 'block'};
-    } else if (mode == 'instru') {
-      instruStyle = {display: 'block'};
+    } else if (mode == 'instrument') {
+      instrumentStyle = {display: 'block'};
     } else if (mode == 'portfo') {
       portfoStyle = {display: 'block'};
     }
@@ -101,7 +101,7 @@ class Main extends React.Component {
         <div style={settingStyle}>
           <Setting ChangeMode={this.ChangeMode} />
         </div>
-        <div style={instruStyle}>
+        <div style={instrumentStyle}>
           <Instruments ChangeMode={this.ChangeMode} />
         </div>
         <div style={portfoStyle}>

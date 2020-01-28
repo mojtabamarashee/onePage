@@ -91,7 +91,7 @@ class Header extends React.Component {
           }}
         />
         <EmojiTransportationIcon
-          onClick={() => this.props.ChangeMode('instru')}
+          onClick={() => this.props.ChangeMode('instrument')}
           style={{
             color: purple[800],
             margin: '0 10px 0 0',
