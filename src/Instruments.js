@@ -52,9 +52,7 @@ const FindSecAvg = csNameOrig => {
 let t, cntr, lG, lR;
 
 const FindCs = v => {
-    console.log("v = ", v);
   let t = allRows.find(v1 => v1.csName == v);
-    console.log("t = ", t);
   let r = t ? t.cs : 0;
   return r;
 };
@@ -66,7 +64,6 @@ let instruments = csNameOrig.map((v, i) => ({
   len: FindSecAvg(v)[1],
 }));
 
-console.log('instruments = ', instruments);
 class Instruments extends React.Component {
   constructor(props) {
     super(props);

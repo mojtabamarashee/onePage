@@ -5,7 +5,6 @@ import {faLongArrowAltLeft} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 import {forwardRef} from 'react';
-console.log('portfo2 = ', portfo);
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -22,7 +21,9 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import {makeStyles} from '@material-ui/core/styles';
-
+var numeral = require('numeral');
+let t;
+numeral.defaultFormat('0,0.[00]');
 const LoadPortfo = () => {
   try {
     const serializedState = localStorage.getItem('portfo');
@@ -35,7 +36,6 @@ const LoadPortfo = () => {
   }
 };
 let portfo = LoadPortfo();
-console.log('portfo3 = ', portfo);
 
 class Portfo extends React.Component {
   constructor(props) {
@@ -90,7 +90,6 @@ class Portfo extends React.Component {
           color="black"
         />
         <br />
-        <br />
         <MaterialTable
           icons={tableIcons}
           title="Basic Portfo"
@@ -106,6 +105,7 @@ class Portfo extends React.Component {
                 position: 'sticky',
                 left: '0',
                 zIndex: '999',
+                padding: '3px',
               },
               headerStyle: {
                 backgroundColor: '#039be5',
@@ -118,11 +118,16 @@ class Portfo extends React.Component {
               },
             },
             {title: 'تعداد', field: 'num'},
-            {title: 'نماد', field: 'test2'},
-            {title: 'نماد', field: 'test3'},
-            {title: 'تعداد', field: 'test4'},
-            {title: 'تعداد', field: 'test5'},
-            {title: 'تعداد', field: 'test6'},
+            {title: 'قیمت.پ', field: 'gheymat'},
+            {title: 'ق.م', field: 'miyanginGh'},
+            {
+              title: 'ارزش',
+              field: 'arzesh',
+              customSort: (a, b) =>
+                a.arzesh.toString().replace(/,/g, '') -
+                b.arzesh.toString().replace(/,/g, ''),
+            },
+            {title: 'سود', field: 'sood'}, 
             {title: 'تعداد', field: 'test7'},
             {title: 'تعداد', field: 'test8'},
           ]}
@@ -131,6 +136,17 @@ class Portfo extends React.Component {
               ? portfo.map((row, i) => ({
                   symbol: row.symbol,
                   num: row.num,
+                  gheymat: (t = allRows.find(v => v.name == row.symbol)) ? t.pl : 0,
+                  miyanginGh: row.miyanginGh,
+                  get arzesh() {
+                    return numeral(this.gheymat * this.num).format();
+                  },
+                  get sood() {
+                    return numeral(
+                      this.arzesh.toString().replace(/,/g, '') -
+                        this.num * this.miyanginGh,
+                    ).format();
+                  },
                 }))
               : [{symbol: 'Nan', num: 'Nan'}]
           }

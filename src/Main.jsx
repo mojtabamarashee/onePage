@@ -76,6 +76,7 @@ class Main extends React.Component {
   };
 
   render() {
+allRows.forEach(v=>console.log(v.inscode))
     if (table) table.draw();
     this.SetStyles(this.state.mode);
     return (

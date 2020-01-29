@@ -90,11 +90,10 @@ const CreateTable = data => {
                   (v, i) => (
                     (stylee = {color: v.color}),
                     (
-                      <tr key={v.l30}>
+                      <tr key={v.l18}>
                         {
                           (portfo &&
-                          portfo.symbols &&
-                          portfo.symbols.find(v1 => v1 == v.name)
+                          portfo.find(v1 => v1.symbol == v.name)
                             ? (backgroundColor = 'lightYellow')
                             : (backgroundColor = '!important'),
                           (

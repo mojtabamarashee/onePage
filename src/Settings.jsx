@@ -70,7 +70,7 @@ class Setting extends React.Component {
                 var data = XLSX.utils.sheet_to_json(ws, {raw: true, header: 1});
 
                 data.shift();
-                portfoo = data.map(v => ({symbol: v[0], num: v[1]}));
+                portfoo = data.map(v => ({symbol: v[0], num: v[1], miyanginGh : v[6]}));
 
                 this.SavePortfo(portfoo);
               } catch (e) {
