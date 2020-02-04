@@ -1020,7 +1020,7 @@ class Table extends React.Component {
                               }}
                               width="100%"
                               height="100%"
-                              src="http://smojmar.github.io/upload/sahamYab.png"
+                              src="upload/sahamYab.png"
                             />
                           </a>
                         </td>
@@ -1036,7 +1036,7 @@ class Table extends React.Component {
                               }}
                               width="100%"
                               height="100%"
-                              src="http://smojmar.github.io/upload/tseIcon.jpg"
+                              src="upload/tseIcon.jpg"
                             />
                           </a>
                         </td>
