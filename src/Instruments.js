@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 var numeral = require('numeral');
 import {cs} from './CS.js';
 import {csName, csNameOrig} from './CsName.js';
-
+import {Link} from 'react-router-dom';
 
 Object.defineProperty(Array.prototype, 'chunk', {
   value: function(chunkSize) {
@@ -36,7 +36,6 @@ const ScaleR = num => {
   );
 };
 
-
 const FindSecAvg = csNameOrig => {
   let num = allRows
     .filter((v3, i) => v3.l18.match(/^([^0-9]*)$/))
@@ -52,10 +51,15 @@ const FindSecAvg = csNameOrig => {
 
 let t, cntr, lG, lR;
 
+const FindCs = v => {
+  let t = allRows.find(v1 => v1.csName == v);
+  let r = t ? t.cs : 0;
+  return r;
+};
 let instruments = csNameOrig.map((v, i) => ({
   nameOrig: v,
   myName: csName[i],
-  cs: t = allRows.find(v1 => v1.l30 == v) ? t.cs : 0,
+  cs: FindCs(v),
   avg: FindSecAvg(v)[0],
   len: FindSecAvg(v)[1],
 }));
@@ -91,7 +95,7 @@ class Instruments extends React.Component {
                     ? 'white'
                     : 'black',
               }}>
-              <span>{v.myName + '(' + v.len + ')'}</span>
+              <Link to={'/' + v.nameOrig } target="_blank" >{v.myName + '(' + v.len + ')'}</Link>
               <br />
               <span>{numeral(v.avg).format()}</span>
             </td>
@@ -110,7 +114,7 @@ class Instruments extends React.Component {
         />
         <br />
         <br />
-        <table style={{margin:'2px'}} cellSpacing = '10'>
+        <table style={{margin: '2px'}} cellSpacing="10">
           {rows.map((row, i) => (
             <tr style={{height: '40px'}}>{row}</tr>
           ))}
@@ -119,4 +123,4 @@ class Instruments extends React.Component {
     );
   }
 }
-export {Instruments};
+export {Instruments, instruments};
