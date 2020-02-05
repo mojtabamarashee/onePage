@@ -76,7 +76,7 @@ class Main extends React.Component {
   };
 
   render() {
-allRows.forEach(v=>console.log(v.inscode))
+    console.log('main render')
     if (table) table.draw();
     this.SetStyles(this.state.mode);
     return (
@@ -106,7 +106,7 @@ allRows.forEach(v=>console.log(v.inscode))
           <Instruments ChangeMode={this.ChangeMode} />
         </div>
         <div style={portfoStyle}>
-          <Portfo ChangeMode={this.ChangeMode} />
+          <Portfo styl = {portfoStyle} ChangeMode={this.ChangeMode} />
         </div>
       </div>
     );

@@ -41,6 +41,7 @@ class Setting extends React.Component {
   };
 
   render() {
+    console.log('settings render')
     return (
       <div>
         <FontAwesomeIcon

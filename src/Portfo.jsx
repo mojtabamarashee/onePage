@@ -21,6 +21,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import {makeStyles} from '@material-ui/core/styles';
+import _ from 'lodash';
 var numeral = require('numeral');
 let t;
 numeral.defaultFormat('0,0.[00]');
@@ -38,35 +39,64 @@ const LoadPortfo = () => {
 };
 let portfo = LoadPortfo();
 
+const tableIcons = {
+	Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+	Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+	Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+	Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+	DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+	Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+	Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+	Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
+	FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
+	LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+	NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+	PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
+	ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+	Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+	SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
+	ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
+	ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+};
 class Portfo extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {portfo: []};
+	}
+
+	GetPlosingInterval = () => {
+		let portfo = _.cloneDeep(this.state.portfo);
+		this.state.portfo.map((v, i) => {
+			fetch('/' + v.symbol)
+				.then(res => res.json())
+				.then(
+					result => {
+						portfo[i].gheymat = result.pl;
+						//		if (JSON.stringify(portfo) != JSON.stringify(this.state.portfo))
+						{
+							this.setState({portfo: portfo});
+						}
+					},
+					error => {
+						console.log('error = ', error);
+					},
+				);
+		});
+	};
+
+	componentWillMount() {
+		let portfo = LoadPortfo();
+		this.setState({portfo: portfo});
+	}
+	componentDidMount() {
+		//this.props.styl.display == 'none' ? (interval = 10000000) : (interval = 1000);
+		//console.log('interval = ', interval);
+		setInterval(this.GetPlosingInterval, 5000);
 	}
 
 	render() {
 		let v = this.props.v;
-
-		const tableIcons = {
-			Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-			Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-			Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-			Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-			DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-			Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-			Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-			Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-			FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-			LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-			NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-			PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
-			ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-			Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-			SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-			ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-			ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-		};
-
+		console.log('portfo render');
 		return (
 			<div>
 				<FontAwesomeIcon
@@ -113,16 +143,21 @@ class Portfo extends React.Component {
 							customSort: (a, b) =>
 								a.arzesh.toString().replace(/,/g, '') - b.arzesh.toString().replace(/,/g, ''),
 						},
-						{title: 'سود', field: 'sood'},
+						{
+							title: 'سود',
+							field: 'sood',
+							customSort: (a, b) =>
+								a.sood.toString().replace(/,/g, '') - b.sood.toString().replace(/,/g, ''),
+						},
 						{title: 'تعداد', field: 'test7'},
 						{title: 'تعداد', field: 'test8'},
 					]}
 					data={
-						portfo && portfo.length > 1
-							? portfo.map((row, i) => ({
+						this.state.portfo && this.state.portfo.length > 1
+							? this.state.portfo.map((row, i) => ({
 									symbol: row.symbol,
 									num: row.num,
-									gheymat: axios.get('/' + row.symbol).pl,
+									gheymat: row.gheymat,
 									miyanginGh: row.miyanginGh,
 									get arzesh() {
 										return numeral(this.gheymat * this.num).format();

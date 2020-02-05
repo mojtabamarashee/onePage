@@ -1055,6 +1055,7 @@ class Table extends React.Component {
   };
 
   render() {
+    console.log('table render')
     this.GetCurRows();
     portfo = LoadPortfo();
 
