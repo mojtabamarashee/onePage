@@ -227,8 +227,11 @@ f.each(q,function(a,b){f.fn.DataTable[a]=b});return f.fn.dataTable});
 <script src= 'https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js'></script>
 
 
-<script src= 'allRows_98_11_02.js'></script>
-
+<script>
+//<script src= 'allRows_98_11_02.js'>//</script>
+axios.get('http://filterbourse.ir/api/allRows').then(response => {
+	});
+</script>
 <script type="text/javascript">
  let date= "98/11/02"
 

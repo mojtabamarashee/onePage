@@ -38,7 +38,7 @@ const ScaleR = num => {
 
 const FindSecAvg = csNameOrig => {
   let num = allRows
-    .filter((v3, i) => v3.l18.match(/^([^0-9]*)$/))
+    .filter((v3, i) => v3.l18 && v3.l18.match(/^([^0-9]*)$/))
     .filter(({csName}) => csName == csNameOrig);
   let coef;
   let secAvg =

@@ -595,7 +595,7 @@ class Filter extends React.Component {
         </Badge>
         <br />
         <div dir="RTL">
-          <table style={{float:"right"}}>
+          <table style={{float: 'right'}}>
             <tr>
               <td>
                 <FormControlLabel
@@ -682,7 +682,8 @@ class Filter extends React.Component {
                 {value.toString() +
                   ' (' +
                   allRows
-                    .filter((v, i) => v.l18.match(/^([^0-9]*)$/))
+                    .filter(v => v.l18)
+                    .filter((v, i) => (v.l18 && v.l18.match(/^([^0-9]*)$/)))
                     .filter(v => v.csName == csNameOrig[i]).length +
                   ')'}
               </MenuItem>
