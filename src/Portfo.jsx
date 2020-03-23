@@ -98,7 +98,7 @@ class Portfo extends React.Component {
   componentDidMount() {
     //this.props.styl.display == 'none' ? (interval = 10000000) : (interval = 1000);
     //console.log('interval = ', interval);
-    setInterval(this.GetPlosingInterval, 5000);
+    //setInterval(this.GetPlosingInterval, 5000);
   }
 
   render() {

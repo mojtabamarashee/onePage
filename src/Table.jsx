@@ -5,6 +5,7 @@ import _ from 'lodash';
 import {SymbolPage} from './SymbolPage.jsx';
 import {Link} from 'react-router-dom';
 import {instHistory} from 'react-router-dom';
+import {that as filterThis} from './Filter.jsx';
 let curRows = allRows,
   url,
   tableThis,
@@ -111,9 +112,9 @@ const CreateTable = data => {
                               style={{
                                 fontWeight: 'bold',
                               }}>
-                              <Link to={'/' + v.name} target="_blank">
+                              <a href={'/' + v.name} target="_blank">
                                 {v.name}
-                              </Link>
+                              </a>
                             </span>
                             <p
                               style={{
@@ -205,7 +206,7 @@ const CreateTable = data => {
                               style={{
                                 color: color2,
                               }}>
-                              {v.pcp}
+                              {Math.round(v.pcp * 100) / 100}
                             </span>
                             <p
                               style={{
@@ -253,11 +254,7 @@ const CreateTable = data => {
                             .format('0a')
                             .toUpperCase()
                             .toString() + '\n\r'),
-                        (data[index].av30 =
-                          v && v.vHist
-                            ? v.vHist.slice(0, 30).reduce((p, c) => p + c, 0) /
-                              30
-                            : 0),
+                        (data[index].av30 = v.QTotTran5JAvg),
                         (t2 = numeral(data[index].av30)
                           .format('0a')
                           .toUpperCase()),
@@ -287,8 +284,8 @@ const CreateTable = data => {
                       }
                       {
                         ((width =
-                          v.ct.Buy_I_Volume && v.tvol > 0
-                            ? ((v.ct.Buy_I_Volume / v.tvol) * 100).toString()
+                          v.Buy_I_Volume && v.tvol > 0
+                            ? ((v.Buy_I_Volume / v.tvol) * 100).toString()
                             : '0'),
                         (
                           <td>
@@ -297,11 +294,11 @@ const CreateTable = data => {
                                 padding: '0 0 0 4px',
                                 fontSize: '14px',
                               }}>
-                              {v.ct
+                              {1
                                 ? numeral(
-                                    v.ct.Sell_CountI /
-                                      v.ct.Sell_I_Volume /
-                                      (v.ct.Buy_CountI / v.ct.Buy_I_Volume),
+                                    v.Sell_CountI /
+                                      v.Sell_I_Volume /
+                                      (v.Buy_CountI / v.Buy_I_Volume),
                                   ).format()
                                 : null}
                             </span>
@@ -332,12 +329,20 @@ const CreateTable = data => {
                       <td>{v.rsi}</td>
                       {
                         ((num =
-                          Math.round(v.po1) == Math.round(v.tmin) && v.qd1 == 0
-                            ? -v.qo1
-                            : Math.round(v.pd1) == Math.round(v.tmax) &&
-                              v.qd1 > 0
-                            ? v.qd1
+                          Math.round(v.po1) == Math.round(v.tmin) &&
+                          (v.qd1 == 0 || v.qo1 < v.tmin)
+                            ? -v.po1 * v.pd1
+                            : Math.round(v.qo1) == Math.round(v.tmax) &&
+                              (v.pd1 == 0 || v.po1 > v.tmax)
+                            ? v.qo1 * v.qd1
                             : 0),
+                        v.name == 'پترول'
+                          ? (console.log('tmax = ', v.tmax),
+                            console.log('pd1 = ', v.pd1),
+                            console.log('qd1 = ', v.qd1),
+                            console.log('qo1 = ', v.qo1),
+                            console.log('v = ', v.name))
+                          : null,
                         num >= 0 ? (color = 'green') : (color = 'red'),
                         (
                           <td
@@ -352,26 +357,29 @@ const CreateTable = data => {
                         ))
                       }
                       {
-                        <td
-                          data-sort={v.mmY ? v.mmY : 0}
-                          style={{
-                            padding: '0 0 0 4px',
-                            fontSize: '14px',
-                          }}>
-                          <span>{v.mm ? v.mm : null}</span>
-                          <p
+                        (GetMM(v),
+                        (
+                          <td
+                            data-sort={v.mmY ? v.mmY : 0}
                             style={{
-                              clear: 'left',
-                              margin: '0',
-                            }}
-                          />
-                          <span
-                            style={{
-                              fontWeight: 'bold',
+                              padding: '0 0 0 4px',
+                              fontSize: '14px',
                             }}>
-                            {v.mmY ? v.mmY : null}
-                          </span>
-                        </td>
+                            <span>{v.mm ? v.mm : null}</span>
+                            <p
+                              style={{
+                                clear: 'left',
+                                margin: '0',
+                              }}
+                            />
+                            <span
+                              style={{
+                                fontWeight: 'bold',
+                              }}>
+                              {v.mmY ? v.mmY : null}
+                            </span>
+                          </td>
+                        ))
                       }
                       <td style={stylee}>{v.flow}</td>
                       <td
@@ -542,10 +550,10 @@ const CreateTable = data => {
                         ))
                       }
                       <td
-                        data-sort={v.ct ? v.ct.Buy_N_Volume : 0}
+                        data-sort={v.Buy_N_Volume ? v.Buy_N_Volume : 0}
                         style={{padding: 0}}>
                         {v.ct
-                          ? numeral(v.ct.Buy_N_Volume)
+                          ? numeral(v.Buy_N_Volume)
                               .format('0a')
                               .toString()
                               .toUpperCase()
@@ -564,10 +572,10 @@ const CreateTable = data => {
                       </td>
                       {
                         <td
-                          data-sort={v.ct ? v.ct.Buy_CountN : 0}
+                          data-sort={v.Buy_CountN ? v.Buy_CountN : 0}
                           style={{padding: 0}}>
                           {v.ct
-                            ? numeral(v.ct.Buy_CountN)
+                            ? numeral(v.Buy_CountN)
                                 .format('0a')
                                 .toString()
                                 .toUpperCase()
@@ -584,8 +592,19 @@ const CreateTable = data => {
                           />
                         </td>
                       }
-                      <td>{v.cs}</td>
-                      <td>{v.pClosingHist ? v.pClosingHist.length : null}</td>
+                      <td>
+                        <span
+                          onClick={() => {
+                            //let t = [];
+                            //t.target = [];
+                            //t.target.value = v.cs;
+                            //console.log('t = ', t);
+                            //filterThis.CsSelected(t);
+                          }}>
+                          {v.cs}
+                        </span>
+                      </td>
+                      <td>{v.hist ? v.hist.length : null}</td>
                       <td>
                         <a
                           href={
@@ -651,6 +670,8 @@ class Table extends React.Component {
       d360: [],
     };
     tableThis = this;
+
+    allRows.forEach(v => GetBazdeh(v));
   }
 
   Plot = (canvasId, data, min, max, op) => {
@@ -778,9 +799,10 @@ class Table extends React.Component {
     //5d price
     allRows
       .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 4).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 5);
         data.push(v.pc);
         let canvas = document.getElementById('v5d' + v.inscode);
         this.Plot(
@@ -816,9 +838,11 @@ class Table extends React.Component {
     //10d hist
     allRows
       .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 9).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 10);
+
         data.push(v.pc);
         let canvas = document.getElementById('v10d' + v.inscode);
         this.Plot(
@@ -854,9 +878,11 @@ class Table extends React.Component {
     //30d price
     allRows
       .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 29).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 30);
+
         data.push(v.pc);
         let canvas = document.getElementById('v30d' + v.inscode);
         this.Plot(
@@ -890,9 +916,10 @@ class Table extends React.Component {
 
     allRows
       .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 59).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 60);
         data.push(v.pc);
         let canvas = document.getElementById('v60d' + v.inscode);
         this.Plot(
@@ -926,9 +953,9 @@ class Table extends React.Component {
 
     allRows
       .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 249).reverse();
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 250);
         data.push(v.pc);
         let canvas = document.getElementById('v360d' + v.inscode);
         this.Plot(
@@ -947,11 +974,8 @@ class Table extends React.Component {
       .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.ctHist)
       .forEach((v, i) => {
-        let data = v.ctHist
-          .map(v1 => v1.split(','))
-          .map(v2 => v2[1])
-          .reverse();
-        data.push(v.ct.Buy_CountN);
+        let data = v.ctHist.map(v2 => v2[1]).reverse();
+        data.push(v.Buy_CountN);
         let canvas = document.getElementById('hn' + v.inscode);
         this.Plot(
           'hn' + v.inscode.toString(),
@@ -969,11 +993,8 @@ class Table extends React.Component {
       .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.ctHist)
       .forEach((v, i) => {
-        let data = v.ctHist
-          .map(v1 => v1.split(','))
-          .map(v2 => v2[5])
-          .reverse();
-        data.push(v.ct.Buy_N_Volume);
+        let data = v.ctHist.map(v2 => v2[5]).reverse();
+        data.push(v.Buy_N_Volume);
         let canvas = document.getElementById('hv' + v.inscode);
         this.Plot(
           'hv' + v.inscode.toString(),
@@ -1088,5 +1109,84 @@ class Table extends React.Component {
     );
   }
 }
+function GetMM(v) {
+  if (v.hist) {
+    let histData = v.hist.map(v => v.pl).reverse();
 
+    let max = Math.max(...histData.slice(0, 60));
+    v.pc <= max
+      ? (v.mm = numeral(-((max - v.pc) / max) * 100).format())
+      : (v.mm = 0);
+
+    max = Math.max(...histData.slice(0, 250));
+    v.pc <= max
+      ? (v.mmY = numeral(-((max - v.pc) / max) * 100).format())
+      : (v.mmY = 0);
+  } else {
+    v.mm = 0;
+    v.mmY = 0;
+  }
+}
+
+function GetBazdeh(v) {
+  if (v.hist) {
+    let data = v.hist.map(v => v.pl);
+    let len = v.hist.length;
+
+    let n = len - 250;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d360 = val;
+    } else {
+      v.d360 = 'N';
+    }
+
+    n = len - 60;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d60 = val;
+    } else {
+      v.d60 = 'N';
+    }
+
+    n = len - 30;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d30 = val;
+    } else {
+      v.d30 = 'N';
+    }
+
+    n = len - 10 - 1;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d10 = val;
+    } else {
+      v.d10 = 'N';
+    }
+
+    n = len - 5;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d5 = val;
+    } else {
+      v.d5 = 'N';
+    }
+  }
+}
 export {Table, curRows, tableThis, table, columns, portfo, CreateTable};

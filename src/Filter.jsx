@@ -19,6 +19,7 @@ let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
 let kafeGheymat, volumeMoreThan, dargir;
+let that;
 
 filters.push({
   exist: 0,
@@ -299,6 +300,7 @@ filters.push({
 class Filter extends React.Component {
   constructor(props) {
     super(props);
+    that = this;
     this.state = {
       priceFilterEn: 0,
       searchResultNum: null,
@@ -488,6 +490,7 @@ class Filter extends React.Component {
 
   CsSelected = e => {
     selectedCs = e.target.value;
+      console.log("selectedCs = ", selectedCs);
     if (selectedCs != 'none') {
       filters.find(v => v.name == 'CsSelected').exist = 1;
       $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
@@ -683,7 +686,7 @@ class Filter extends React.Component {
                   ' (' +
                   allRows
                     .filter(v => v.l18)
-                    .filter((v, i) => (v.l18 && v.l18.match(/^([^0-9]*)$/)))
+                    .filter((v, i) => v.l18 && v.l18.match(/^([^0-9]*)$/))
                     .filter(v => v.csName == csNameOrig[i]).length +
                   ')'}
               </MenuItem>
@@ -988,4 +991,4 @@ class Filter extends React.Component {
     );
   }
 }
-export {Filter, filters};
+export {Filter, filters, that};
