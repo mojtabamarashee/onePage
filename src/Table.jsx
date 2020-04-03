@@ -21,7 +21,8 @@ let curRows = allRows,
   width,
   index,
   backgroundColor,
-  portfo;
+  portfo,
+  iterateList = [];
 var numeral = require('numeral');
 let canvasMargin = 0.05;
 numeral.defaultFormat('0,0.[00]');
@@ -51,6 +52,10 @@ const CreateTable = data => {
   let mm, t1, t2;
   const yellowColor = {color: 'yellow'};
   const blackColor = {color: 'black'};
+
+  let ONC = () => {
+    console.log('erer');
+  };
   return (
     <div style={{margin: '5px'}}>
       <div className="table-responsive">
@@ -90,7 +95,7 @@ const CreateTable = data => {
                 (v, i) => (
                   (stylee = {color: v.color}),
                   (
-                    <tr key={v.l18}>
+                    <tr key={v.l18 + i}>
                       {
                         (portfo &&
                         portfo.length > 1 &&
@@ -99,7 +104,8 @@ const CreateTable = data => {
                           : (backgroundColor = '!important'),
                         (
                           <td
-                            data-search={v.l30 + '___' + v.name}
+                            key={i + v.fullName}
+                            data-search={v.fullName + '___' + v.name}
                             style={{
                               margin: '0',
                               padding: '0 0 0 4px',
@@ -108,14 +114,15 @@ const CreateTable = data => {
                               overflow: 'hidden',
                               backgroundColor: backgroundColor,
                             }}>
-                            <span
+                            <div
+                              onClick={ONC}
                               style={{
                                 fontWeight: 'bold',
                               }}>
                               <a href={'/' + v.name} target="_blank">
                                 {v.name}
                               </a>
-                            </span>
+                            </div>
                             <p
                               style={{
                                 clear: 'left',
@@ -270,7 +277,7 @@ const CreateTable = data => {
                               display: 'block',
                               fontWeight: 'bold',
                             }}
-                            data-sort={v.tvol}>
+                            data-sort={v.av30 == 0 ? -1 : v.tvol / v.av30}>
                             {t1}{' '}
                             <p
                               style={{
@@ -611,14 +618,15 @@ const CreateTable = data => {
                             'https://www.sahamyab.com/hashtag/' +
                             v.name +
                             '/post'
-                          }>
+                          }
+                          target="_blank">
                           <img
                             style={{
                               display: 'block',
                             }}
                             width="100%"
                             height="100%"
-                            src="http://smojmar.github.io/upload/sahamYab.png"
+                            src="http://filterbourse.ir/upload/sahamYab.png"
                           />
                         </a>
                       </td>
@@ -627,14 +635,15 @@ const CreateTable = data => {
                           href={
                             'http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
                             v.inscode
-                          }>
+                          }
+                          target="_blank">
                           <img
                             style={{
                               display: 'block',
                             }}
                             width="100%"
                             height="100%"
-                            src="http://smojmar.github.io/upload/tseIcon.jpg"
+                            src="http://filterbourse.ir/upload/tseIcon.jpg"
                           />
                         </a>
                       </td>
@@ -1007,6 +1016,8 @@ class Table extends React.Component {
         );
       });
 
+    console.log('Start of datatable = ');
+    console.time('datatable');
     table = $('#table').DataTable({
       order: [[1, 'desc']],
       pageLength: 10,
@@ -1043,6 +1054,7 @@ class Table extends React.Component {
         {name: 'col-email'},
       ],
     });
+    console.timeEnd('datatable');
     //$('#table tbody tr').on('click', function(event) {
     //  let t = $(this).hasClass('row_selected');
     //  $('#table tbody tr').removeClass('row_selected');
@@ -1052,6 +1064,24 @@ class Table extends React.Component {
     //    $(this).addClass('row_selected');
     //  }
     //});
+
+    $('table> tbody> tr> td> div>a').on('mousedown', function(event) {
+      let t = $(this).text();
+      let p = table
+        .column(0, {search:'applied'})
+        .data()
+        .map((v, i) => {
+          iterateList[i] = v.match(/href="\/(.*)" t/)[1].replace(/ /g, '');
+        });
+      console.log("iterateList = ", iterateList);
+      let iterateListIndex = iterateList.findIndex(v => v == t);
+      console.log('iterateListIndex = ', iterateListIndex);
+      localStorage.setItem('iterateList', JSON.stringify(iterateList));
+      localStorage.setItem(
+        'iterateListIndex',
+        JSON.stringify(iterateListIndex),
+      );
+    });
   }
 
   componentWillUnmount() {}
@@ -1077,7 +1107,6 @@ class Table extends React.Component {
   };
 
   render() {
-    console.log('table render');
     this.GetCurRows();
     portfo = LoadPortfo();
 

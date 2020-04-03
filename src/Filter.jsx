@@ -18,8 +18,9 @@ import Badge from '@material-ui/core/Badge';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
-let kafeGheymat, volumeMoreThan, dargir;
+let kafeGheymat, volumeMoreThan, dargir, forushHoghughi;
 let that;
+let watchList;
 
 filters.push({
   exist: 0,
@@ -82,7 +83,8 @@ filters.push({
     var row = allRows.find(v => v.name == data[0].split('___')[1]);
     if (row) {
       let r =
-        Math.round(row.pd1) == Math.round(row.tmax) && row.qd1 > 0
+        Math.round(row.qo1) == Math.round(row.tmax) &&
+        (row.pd1 == 0 || row.po1 > row.tmax)
           ? true
           : false;
       return r;
@@ -97,6 +99,18 @@ filters.push({
     var row = allRows.find(v => v.name == data[0].split('___')[1]);
     if (row) {
       let r = row.cs != 68 ? true : false;
+      return r;
+    } else return false;
+  },
+});
+
+filters.push({
+  exist: 0,
+  name: 'ShowWatchList',
+  func: (settings, data, dataIndex) => {
+    var row = allRows.find(v => v.name == data[0].split('___')[1]);
+    if (row) {
+      let r = watchList.includes(row.inscode) ? true : false;
       return r;
     } else return false;
   },
@@ -121,7 +135,8 @@ filters.push({
     var row = allRows.find(v => v.name == data[0].split('___')[1]);
     if (row) {
       let r =
-        Math.round(row.pd1) == Math.round(row.tmax) && row.qd1 > 0
+        Math.round(row.qo1) == Math.round(row.tmax) &&
+        (row.pd1 == 0 || row.po1 > row.tmax)
           ? false
           : true;
       return r;
@@ -151,7 +166,8 @@ filters.push({
     var row = allRows.find(v => v.name == data[0].split('___')[1]);
     if (row) {
       let r =
-        Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0
+        Math.round(row.po1) == Math.round(row.tmin) &&
+        (row.qd1 == 0 || row.qo1 < row.tmin)
           ? true
           : false;
       return r;
@@ -166,7 +182,8 @@ filters.push({
     var row = allRows.find(v => v.name == data[0].split('___')[1]);
     if (row) {
       let r =
-        Math.round(row.po1) == Math.round(row.tmin) && row.qd1 == 0
+        Math.round(row.po1) == Math.round(row.tmin) &&
+        (row.qd1 == 0 || row.qo1 < row.tmin)
           ? false
           : true;
       return r;
@@ -235,8 +252,8 @@ filters.push({
   func: (settings, data, dataIndex) => {
     var v = allRows.find(v => v.name == data[0].split('___')[1]);
     if (v) {
-      if (v.pClosingHist && v.pClosingHist[kafeGheymat]) {
-        let hist = v.pClosingHist.slice(0, kafeGheymat);
+      if (v.hist && v.hist[kafeGheymat]) {
+        let hist = v.hist.slice(0, kafeGheymat).map(v => v.pl);
         let r;
         v.pc <= Math.min(...hist) * 1.02 ? (r = true) : (r = false);
         return r;
@@ -269,13 +286,40 @@ filters.push({
   name: 'Dargir',
   func: (settings, data, dataIndex) => {
     var v = allRows.find(v => v.name == data[0].split('___')[1]);
-    if (v && v.av30) {
-      let avg =
-        v.pClosingHist
-          .filter((v, i) => i < dargir)
-          .reverse()
-          .reduce((p, c) => p + c, 0) / dargir;
-      if (v.pc <= avg + 0.02 * v.pc) {
+    if (v && v.hist) {
+      let len = v.hist.length;
+      let sum = 0;
+      let avg = v.hist
+        .filter((v, i) => i > len - 1 - dargir)
+        .forEach(v => (sum += v.pl));
+      avg = sum / dargir;
+      if (v.pl <= avg + 0.02 * v.pl) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  },
+});
+
+filters.push({
+  exist: 0,
+  name: 'ForushHoghughi',
+  func: (settings, data, dataIndex) => {
+    var v = allRows.find(v => v.name == data[0].split('___')[1]);
+    if (v.Sell_I_Volume && v.Sell_N_Volume) {
+      if (v.name == 'غصینو') {
+        console.log('v = ', v.name);
+        console.log('Sell_I_Volume = ', v.Sell_I_Volume);
+        console.log('Sell_N_Volume = ', v.Sell_N_Volume);
+      }
+      if (
+        (Number(v.Sell_N_Volume) /
+          (Number(v.Sell_I_Volume) + Number(v.Sell_N_Volume))) *
+          100 >
+        forushHoghughi
+      ) {
         return true;
       } else {
         return false;
@@ -390,6 +434,25 @@ class Filter extends React.Component {
     }
   };
 
+  ShowWatchList = () => e => {
+    if (e.target.checked) {
+      watchList = JSON.parse(localStorage.getItem('watchList'));
+      if (!watchList) {
+        watchList = [0];
+      }
+      console.log('watchList = ', watchList);
+      filters.find(v => v.name == 'ShowWatchList').exist = 1;
+      $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+      table.draw();
+      this.setState({searchResultNum: table.page.info().recordsDisplay});
+    } else {
+      filters.find(v => v.name == 'ShowWatchList').exist = 0;
+      $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+      table.draw();
+      this.setState({searchResultNum: table.page.info().recordsDisplay});
+    }
+  };
+
   SafeKharid = () => e => {
     if (e.target.checked) {
       filters.find(v => v.name == 'SafeKharid').exist = 1;
@@ -490,7 +553,7 @@ class Filter extends React.Component {
 
   CsSelected = e => {
     selectedCs = e.target.value;
-      console.log("selectedCs = ", selectedCs);
+    console.log('selectedCs = ', selectedCs);
     if (selectedCs != 'none') {
       filters.find(v => v.name == 'CsSelected').exist = 1;
       $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
@@ -541,9 +604,26 @@ class Filter extends React.Component {
       filters.find(v => v.name == 'Dargir').exist = 1;
       $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
       table.draw();
+      console.log('searchResultNum = ', table.page.info().recordsDisplay);
       this.setState({searchResultNum: table.page.info().recordsDisplay});
     } else {
       filters.find(v => v.name == 'Dargir').exist = 0;
+      $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+      table.draw();
+      this.setState({searchResultNum: table.page.info().recordsDisplay});
+    }
+  };
+
+  ForushHoghughi = e => {
+    forushHoghughi = e.target.value;
+    console.log('ForushHoghughi = ', forushHoghughi);
+    if (forushHoghughi != 0) {
+      filters.find(v => v.name == 'ForushHoghughi').exist = 1;
+      $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+      table.draw();
+      this.setState({searchResultNum: table.page.info().recordsDisplay});
+    } else {
+      filters.find(v => v.name == 'ForushHoghughi').exist = 0;
       $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
       table.draw();
       this.setState({searchResultNum: table.page.info().recordsDisplay});
@@ -599,70 +679,72 @@ class Filter extends React.Component {
         <br />
         <div dir="RTL">
           <table style={{float: 'right'}}>
-            <tr>
-              <td>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={this.PEPos()}
-                      value="gilad"
-                      inputProps={{
-                        'aria-label': 'secondary checkbox',
-                      }}
-                      color="primary"
-                    />
-                  }
-                  label="P/E +"
-                />
-              </td>
-              <td>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={this.PESmallerThanSec()}
-                      value="gilad"
-                      inputProps={{
-                        'aria-label': 'secondary checkbox',
-                      }}
-                      color="primary"
-                    />
-                  }
-                  label="P/E < SecPE"
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={this.PESmallerThanHalfSec()}
-                      value="gilad"
-                      inputProps={{
-                        'aria-label': 'secondary checkbox',
-                      }}
-                      color="primary"
-                    />
-                  }
-                  label="P/E < 0.5 * SecPE"
-                />
-              </td>
-              <td>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      onChange={this.RsiLessThan()}
-                      value="gilad"
-                      inputProps={{
-                        'aria-label': 'secondary checkbox',
-                      }}
-                      color="primary"
-                    />
-                  }
-                  label="RSI < 45"
-                />
-              </td>
-            </tr>
+            <tbody>
+              <tr>
+                <td>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={this.PEPos()}
+                        value="gilad"
+                        inputProps={{
+                          'aria-label': 'secondary checkbox',
+                        }}
+                        color="primary"
+                      />
+                    }
+                    label="P/E +"
+                  />
+                </td>
+                <td>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={this.PESmallerThanSec()}
+                        value="gilad"
+                        inputProps={{
+                          'aria-label': 'secondary checkbox',
+                        }}
+                        color="primary"
+                      />
+                    }
+                    label="P/E < SecPE"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={this.PESmallerThanHalfSec()}
+                        value="gilad"
+                        inputProps={{
+                          'aria-label': 'secondary checkbox',
+                        }}
+                        color="primary"
+                      />
+                    }
+                    label="P/E < 0.5 * SecPE"
+                  />
+                </td>
+                <td>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        onChange={this.RsiLessThan()}
+                        value="gilad"
+                        inputProps={{
+                          'aria-label': 'secondary checkbox',
+                        }}
+                        color="primary"
+                      />
+                    }
+                    label="RSI < 45"
+                  />
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
         <br />
@@ -767,6 +849,7 @@ class Filter extends React.Component {
         <br />
         <p style={{clear: 'right'}} />
         <table style={{float: 'right'}}>
+        <tbody>
           <tr>
             <td>
               <FormControlLabel
@@ -851,6 +934,7 @@ class Filter extends React.Component {
               />
             </td>
           </tr>
+        </tbody>
         </table>
         <p style={{clear: 'right'}} />
         <FormControlLabel
@@ -929,6 +1013,26 @@ class Filter extends React.Component {
           }
         />
 
+        <p style={{clear: 'right'}} />
+        <FormControlLabel
+          style={{float: 'right'}}
+          control={
+            <Checkbox
+              onChange={this.ShowWatchList()}
+              value="gilad"
+              inputProps={{
+                'aria-label': 'secondary checkbox',
+              }}
+              color="primary"
+            />
+          }
+          label={
+            <Typography style={{fontFamily: 'Courier New, Courier, monospace'}}>
+              نمایش دیده بان
+            </Typography>
+          }
+        />
+
         <p
           style={{
             clear: 'right',
@@ -977,7 +1081,7 @@ class Filter extends React.Component {
             style={{margin: '5px'}}
             onChange={this.Dargir}
             variant="filled">
-            {[0, 10, 20, 30, 50, 100, 150, 200, 250].map((value, i) => (
+            {[0, 3, 10, 20, 30, 50, 100, 150, 200, 250].map((value, i) => (
               <MenuItem key={value} style={{margin: '5px'}} value={value}>
                 {value.toString()}
               </MenuItem>
@@ -985,6 +1089,33 @@ class Filter extends React.Component {
           </TextField>
           <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
             {'روز قبل'}
+          </span>
+        </div>
+
+        <p style={{clear: 'right'}} />
+        <div style={{float: 'right'}}>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {'بیش از '}
+          </span>
+          <TextField
+            select
+            id="filled-select-currency"
+            inputProps={{
+              style: {
+                height: '5%',
+              },
+            }}
+            style={{margin: '5px'}}
+            onChange={this.ForushHoghughi}
+            variant="filled">
+            {[0, 40, 50, 60, 70, 80, 90].map((value, i) => (
+              <MenuItem key={value} style={{margin: '5px'}} value={value}>
+                {value.toString()}
+              </MenuItem>
+            ))}
+          </TextField>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {'درصد فروش مربوط یه ححقوقی بوده'}
           </span>
         </div>
       </div>

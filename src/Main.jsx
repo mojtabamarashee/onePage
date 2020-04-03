@@ -8,7 +8,12 @@ import {Instruments} from './Instruments.js';
 import {Portfo} from './Portfo.jsx';
 import {Table, table} from './Table.jsx';
 
-let filterStyle, tableStyle, helpStyle, settingStyle, instrumentStyle, portfoStyle;
+let filterStyle,
+  tableStyle,
+  helpStyle,
+  settingStyle,
+  instrumentStyle,
+  portfoStyle;
 
 class Main extends React.Component {
   constructor(props) {
@@ -20,13 +25,34 @@ class Main extends React.Component {
   }
 
   ChangeMode = mode => {
+    let iterateList = [];
     if (mode == 'table') {
       if (this.state.filtersEn) {
         $.fn.dataTable.ext.search = filters
           .filter(v => v.exist)
           .map(v => v.func);
       }
-      this.setState({mode: mode}, () => table.draw());
+      this.setState({mode: mode}, () => {
+        table.draw();
+
+        $('table> tbody> tr> td> div>a').on('mousedown', function(event) {
+          let t = $(this).text();
+          let p = table
+            .column(0, {search: 'applied'})
+            .data()
+            .map((v, i) => {
+              iterateList[i] = v.match(/href="\/(.*)" t/)[1].replace(/ /g, '');
+            });
+          console.log('iterateList = ', iterateList);
+          let iterateListIndex = iterateList.findIndex(v => v == t);
+          console.log('iterateListIndex = ', iterateListIndex);
+          localStorage.setItem('iterateList', JSON.stringify(iterateList));
+          localStorage.setItem(
+            'iterateListIndex',
+            JSON.stringify(iterateListIndex),
+          );
+        });
+      });
     } else if (mode == 'filter') {
       this.setState({mode: mode});
     } else if (mode == 'help') {
@@ -75,8 +101,11 @@ class Main extends React.Component {
     table.draw();
   };
 
+  componentDidMount() {
+    console.log('main did mount');
+  }
   render() {
-    console.log('main render')
+    console.log('main render');
     if (table) table.draw();
     this.SetStyles(this.state.mode);
     return (
@@ -106,7 +135,7 @@ class Main extends React.Component {
           <Instruments ChangeMode={this.ChangeMode} />
         </div>
         <div style={portfoStyle}>
-          <Portfo styl = {portfoStyle} ChangeMode={this.ChangeMode} />
+          <Portfo styl={portfoStyle} ChangeMode={this.ChangeMode} />
         </div>
       </div>
     );
