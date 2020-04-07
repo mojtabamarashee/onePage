@@ -6,6 +6,7 @@ import {SymbolPage} from './SymbolPage.jsx';
 import {Link} from 'react-router-dom';
 import {instHistory} from 'react-router-dom';
 import {that as filterThis} from './Filter.jsx';
+
 let curRows = allRows,
   url,
   tableThis,
