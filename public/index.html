@@ -225,7 +225,7 @@ f.each(q,function(a,b){f.fn.DataTable[a]=b});return f.fn.dataTable});
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     var request = new XMLHttpRequest();
-request.open('GET', 'http://filterbourse.ir/api/allrows', false);  // `false` makes the request synchronous
+request.open('GET', 'http://filterbourse.ir/api/mi', false);  // `false` makes the request synchronous
 request.send(null);
 
 if (request.status === 200) {
