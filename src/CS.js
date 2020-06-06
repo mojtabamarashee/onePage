@@ -53,7 +53,7 @@ let cs = [
 ];
 
 cs.forEach((v1, i1) => {
-	let t = allRows.find((v, i) => v.l18.match(/^([^0-9]*)$/) && v.cs == v1);
+	let t = allRows.find((v, i) => v.l18 && v.l18.match(/^([^0-9]*)$/) && v.cs == v1);
 	if (!t) {
 		cs = cs.filter((v, i) => v != v1);
 	}

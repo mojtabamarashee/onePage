@@ -5,6 +5,8 @@ import _ from 'lodash';
 import {SymbolPage} from './SymbolPage.jsx';
 import {Link} from 'react-router-dom';
 import {instHistory} from 'react-router-dom';
+import {that as filterThis} from './Filter.jsx';
+
 let curRows = allRows,
   url,
   tableThis,
@@ -20,7 +22,8 @@ let curRows = allRows,
   width,
   index,
   backgroundColor,
-  portfo;
+  portfo,
+  iterateList = [];
 var numeral = require('numeral');
 let canvasMargin = 0.05;
 numeral.defaultFormat('0,0.[00]');
@@ -50,6 +53,10 @@ const CreateTable = data => {
   let mm, t1, t2;
   const yellowColor = {color: 'yellow'};
   const blackColor = {color: 'black'};
+
+  let ONC = () => {
+    console.log('erer');
+  };
   return (
     <div style={{margin: '5px'}}>
       <div className="table-responsive">
@@ -83,273 +90,283 @@ const CreateTable = data => {
             </tr>
           </thead>
           <tbody>
-            {
-              (              data
-                .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
-                .map(
-                  (v, i) => (
-                    (stylee = {color: v.color}),
-                    (
-                      <tr key={v.l18}>
-                        {
-                          (portfo && portfo.length > 1 && 
-                          portfo.find(v1 => v1.symbol == v.name)
-                            ? (backgroundColor = 'lightYellow')
-                            : (backgroundColor = '!important'),
-                          (
-                            <td
-                              data-search={v.l30 + '___' + v.name}
-                              style={{
-                                margin: '0',
-                                padding: '0 0 0 4px',
-                                fontSize: '14px',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                backgroundColor: backgroundColor,
-                              }}>
-                              <span
-                                style={{
-                                  fontWeight: 'bold',
-                                }}>
-                                <Link to={'/' + v.name} target="_blank">{v.name}</Link>
-                              </span>
-                              <p
-                                style={{
-                                  clear: 'left',
-                                  margin: '0',
-                                }}
-                              />
-                              {
-                                (Math.round(v.po1) == Math.round(v.tmin) &&
-                                v.qd1 == 0
-                                  ? ((bgColor = '#ff6666'), (fgColor = 'white'))
-                                  : Math.round(v.pd1) == Math.round(v.tmax) &&
-                                    v.qd1 > 0
-                                  ? ((bgColor = '#00ff00'), (fgColor = 'gray'))
-                                  : ((bgColor = '!important'),
-                                    (fgColor = 'black')),
-                                console.log(''))
-                              }
-                              <div>
-                                <span
-                                  style={{
-                                    margin: '0',
-                                    padding: '0 0 0 0px',
-                                    fontSize: '14px',
-                                  }}>
-                                  {v.pc}
-                                </span>
-                                <div
-                                  style={{
-                                    height: '2px',
-                                    backgroundColor:
-                                      v.plp > 0 ? '#00ff00' : '#ff7777',
-                                    width:
-                                      Math.abs(v.plp) *
-                                        20 *
-                                        (v.flow == 4 ? 5 / 3 : 1) +
-                                      '%',
-                                    display: 'block',
-                                    color: fgColor,
-                                  }}
-                                />
-                              </div>
-                            </td>
-                          ))
-                        }
-                        <td
-                          data-sort={v.pe || 0}
-                          style={{
-                            margin: '0',
-                            padding: '0 0 0 4px',
-                            fontSize: '14px',
-                            display: 'block',
-                          }}>
-                          {Math.round((v.pe || 0) * 10) / 10}
-                          <p
+            {data
+              .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
+              .map(
+                (v, i) => (
+                  (stylee = {color: v.color}),
+                  (
+                    <tr key={v.l18 + i}>
+                      {
+                        (portfo &&
+                        portfo.length > 1 &&
+                        portfo.find(v1 => v1.symbol == v.name)
+                          ? (backgroundColor = 'lightYellow')
+                          : (backgroundColor = '!important'),
+                        (
+                          <td
+                            key={i + v.fullName}
+                            data-search={v.fullName + '___' + v.name}
                             style={{
-                              clear: 'left',
                               margin: '0',
-                            }}
-                          />
-                          <span
-                            style={{
-                              fontWeight: 'bold',
+                              padding: '0 0 0 4px',
+                              fontSize: '14px',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              backgroundColor: backgroundColor,
                             }}>
-                            {Math.round(v.sectorPE * 10) / 10}
-                          </span>
-                        </td>
-                        {
-                          ((num = data
-                            .filter((v3, i) => v3.l18.match(/^([^0-9]*)$/))
-                            .filter(v1 => v1.cs == v.cs)),
-                          (secAvg =
-                            num.reduce((a, c) => {
-                              c.flow == 4 ? (coef = 5 / 3) : (coef = 1);
-                              return a + c.pcp * coef;
-                            }, 0) / num.length),
-                          secAvg >= 0 ? (color = 'green') : (color = 'red'),
-                          v.pcp >= 0 ? (color2 = 'green') : (color2 = 'red'),
-                          (
-                            <td
-                              data-sort={v.pcp}
+                            <div
+                              onClick={ONC}
                               style={{
-                                padding: '0 0 0 4px',
-                                fontSize: '14px',
-                              }}>
-                              <span
-                                style={{
-                                  color: color2,
-                                }}>
-                                {v.pcp}
-                              </span>
-                              <p
-                                style={{
-                                  clear: 'left',
-                                  margin: '0',
-                                }}
-                              />
-                              <span
-                                style={{
-                                  color: color,
-                                  fontWeight: 'bold',
-                                }}>
-                                {numeral(secAvg).format()}
-                              </span>
-                            </td>
-                          ))
-                        }
-                        {
-                          (v.pmin && v.pmax && v.pcp
-                            ? (dataSort = ((v.pmax - v.pmin) / v.pc) * 100)
-                            : (dataSort = 0),
-                          (
-                            <td
-                              style={{
-                                padding: '0 0 0 4px',
-                                fontSize: '14px',
-                              }}
-                              data-sort={dataSort}>
-                              {numeral(
-                                ((v.pmax - v.pmin) / v.pc) * 100,
-                              ).format()}
-                              <p
-                                style={{
-                                  clear: 'left',
-                                  margin: '0',
-                                }}
-                              />
-                            </td>
-                          ))
-                        }
-                        {
-                          ((index = data.findIndex(v1 => v1.l18 == v.l18)),
-                          (t1 =
-                            numeral(v.tvol)
-                              .format('0a')
-                              .toUpperCase()
-                              .toString() + '\n\r'),
-                          (data[index].av30 =
-                            v && v.vHist
-                              ? v.vHist
-                                  .slice(0, 30)
-                                  .reduce((p, c) => p + c, 0) / 30
-                              : 0),
-                          (t2 = numeral(data[index].av30)
-                            .format('0a')
-                            .toUpperCase()),
-                          (
-                            <td
-                              style={{
-                                margin: '0',
-                                padding: '0 0 0 4px',
-                                fontSize: '14px',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                fontFamily: 'Courier New, Courier, monospace',
-                                display: 'block',
                                 fontWeight: 'bold',
+                              }}>
+                              <a href={'/' + v.name} target="_blank">
+                                {v.name}
+                              </a>
+                            </div>
+                            <p
+                              style={{
+                                clear: 'left',
+                                margin: '0',
                               }}
-                              data-sort={v.tvol}>
-                              {t1}{' '}
-                              <p
-                                style={{
-                                  clear: 'left',
-                                  margin: '0',
-                                }}
-                              />{' '}
-                              {t2}
-                            </td>
-                          ))
-                        }
-                        {
-                          ((width =
-                            v.ct.Buy_I_Volume && v.tvol > 0
-                              ? ((v.ct.Buy_I_Volume / v.tvol) * 100).toString()
-                              : '0'),
-                          (
-                            <td>
+                            />
+                            {
+                              (Math.round(v.po1) == Math.round(v.tmin) &&
+                              v.qd1 == 0
+                                ? ((bgColor = '#ff6666'), (fgColor = 'white'))
+                                : Math.round(v.pd1) == Math.round(v.tmax) &&
+                                  v.qd1 > 0
+                                ? ((bgColor = '#00ff00'), (fgColor = 'gray'))
+                                : ((bgColor = '!important'),
+                                  (fgColor = 'black')),
+                              console.log(''))
+                            }
+                            <div>
                               <span
                                 style={{
-                                  padding: '0 0 0 4px',
+                                  margin: '0',
+                                  padding: '0 0 0 0px',
                                   fontSize: '14px',
                                 }}>
-                                {v.ct
-                                  ? numeral(
-                                      v.ct.Sell_CountI /
-                                        v.ct.Sell_I_Volume /
-                                        (v.ct.Buy_CountI / v.ct.Buy_I_Volume),
-                                    ).format()
-                                  : null}
+                                {v.pc}
                               </span>
-                              <p
-                                style={{
-                                  clear: 'left',
-                                  margin: '0',
-                                }}
-                              />
                               <div
                                 style={{
-                                  height: '10px',
-                                  borderStyle: 'groove',
-                                }}>
-                                <div
-                                  style={{
-                                    backgroundColor: 'blue',
-                                    width: width + '%',
-                                    padding: '0',
-                                    margin: '0',
-                                    height: '100%',
-                                  }}
-                                />
-                              </div>
-                            </td>
-                          ))
-                        }
-                        <td>{v.rsi}</td>
-                        {
-                          ((num =
-                            Math.round(v.po1) == Math.round(v.tmin) &&
-                            v.qd1 == 0
-                              ? -v.qo1
-                              : Math.round(v.pd1) == Math.round(v.tmax) &&
-                                v.qd1 > 0
-                              ? v.qd1
-                              : 0),
-                          num >= 0 ? (color = 'green') : (color = 'red'),
-                          (
-                            <td
-                              data-sort={num}
+                                  height: '2px',
+                                  backgroundColor:
+                                    v.plp > 0 ? '#00ff00' : '#ff7777',
+                                  width:
+                                    Math.abs(v.plp) *
+                                      20 *
+                                      (v.flow == 4 ? 5 / 3 : 1) +
+                                    '%',
+                                  display: 'block',
+                                  color: fgColor,
+                                }}
+                              />
+                            </div>
+                          </td>
+                        ))
+                      }
+                      <td
+                        data-sort={v.pe || 0}
+                        style={{
+                          margin: '0',
+                          padding: '0 0 0 4px',
+                          fontSize: '14px',
+                          display: 'block',
+                        }}>
+                        {Math.round((v.pe || 0) * 10) / 10}
+                        <p
+                          style={{
+                            clear: 'left',
+                            margin: '0',
+                          }}
+                        />
+                        <span
+                          style={{
+                            fontWeight: 'bold',
+                          }}>
+                          {Math.round(v.sectorPE * 10) / 10}
+                        </span>
+                      </td>
+                      {
+                        ((num = data
+                          .filter(
+                            (v3, i) => v3.l18 && v3.l18.match(/^([^0-9]*)$/),
+                          )
+                          .filter(v1 => v1.cs == v.cs)),
+                        (secAvg =
+                          num.reduce((a, c) => {
+                            c.flow == 4 ? (coef = 5 / 3) : (coef = 1);
+                            return a + c.pcp * coef;
+                          }, 0) / num.length),
+                        secAvg >= 0 ? (color = 'green') : (color = 'red'),
+                        v.pcp >= 0 ? (color2 = 'green') : (color2 = 'red'),
+                        (
+                          <td
+                            data-sort={v.pcp}
+                            style={{
+                              padding: '0 0 0 4px',
+                              fontSize: '14px',
+                            }}>
+                            <span
+                              style={{
+                                color: color2,
+                              }}>
+                              {Math.round(v.pcp * 100) / 100}
+                            </span>
+                            <p
+                              style={{
+                                clear: 'left',
+                                margin: '0',
+                              }}
+                            />
+                            <span
                               style={{
                                 color: color,
+                                fontWeight: 'bold',
                               }}>
-                              {numeral(num)
-                                .format('0a')
-                                .toUpperCase()}
-                            </td>
-                          ))
-                        }
-                        {
+                              {numeral(secAvg).format()}
+                            </span>
+                          </td>
+                        ))
+                      }
+                      {
+                        (v.pmin && v.pmax && v.pcp
+                          ? (dataSort = ((v.pmax - v.pmin) / v.pc) * 100)
+                          : (dataSort = 0),
+                        (
+                          <td
+                            style={{
+                              padding: '0 0 0 4px',
+                              fontSize: '14px',
+                            }}
+                            data-sort={dataSort}>
+                            {numeral(((v.pmax - v.pmin) / v.pc) * 100).format()}
+                            <p
+                              style={{
+                                clear: 'left',
+                                margin: '0',
+                              }}
+                            />
+                          </td>
+                        ))
+                      }
+                      {
+                        ((index = data.findIndex(
+                          v1 => v1.l18 && v1.l18 == v.l18,
+                        )),
+                        (t1 =
+                          numeral(v.tvol)
+                            .format('0a')
+                            .toUpperCase()
+                            .toString() + '\n\r'),
+                        (data[index].av30 = v.QTotTran5JAvg),
+                        (t2 = numeral(data[index].av30)
+                          .format('0a')
+                          .toUpperCase()),
+                        (
+                          <td
+                            style={{
+                              margin: '0',
+                              padding: '0 0 0 4px',
+                              fontSize: '14px',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              fontFamily: 'Courier New, Courier, monospace',
+                              display: 'block',
+                              fontWeight: 'bold',
+                            }}
+                            data-sort={v.av30 == 0 ? -1 : v.tvol / v.av30}>
+                            {t1}{' '}
+                            <p
+                              style={{
+                                clear: 'left',
+                                margin: '0',
+                              }}
+                            />{' '}
+                            {t2}
+                          </td>
+                        ))
+                      }
+                      {
+                        ((width =
+                          v.Buy_I_Volume && v.tvol > 0
+                            ? ((v.Buy_I_Volume / v.tvol) * 100).toString()
+                            : '0'),
+                        (
+                          <td>
+                            <span
+                              style={{
+                                padding: '0 0 0 4px',
+                                fontSize: '14px',
+                              }}>
+                              {1
+                                ? numeral(
+                                    v.Sell_CountI /
+                                      v.Sell_I_Volume /
+                                      (v.Buy_CountI / v.Buy_I_Volume),
+                                  ).format()
+                                : null}
+                            </span>
+                            <p
+                              style={{
+                                clear: 'left',
+                                margin: '0',
+                              }}
+                            />
+                            <div
+                              style={{
+                                height: '10px',
+                                borderStyle: 'groove',
+                              }}>
+                              <div
+                                style={{
+                                  backgroundColor: 'blue',
+                                  width: width + '%',
+                                  padding: '0',
+                                  margin: '0',
+                                  height: '100%',
+                                }}
+                              />
+                            </div>
+                          </td>
+                        ))
+                      }
+                      <td>{v.rsi}</td>
+                      {
+                        ((num =
+                          Math.round(v.po1) == Math.round(v.tmin) &&
+                          (v.qd1 == 0 || v.qo1 < v.tmin)
+                            ? -v.po1 * v.pd1
+                            : Math.round(v.qo1) == Math.round(v.tmax) &&
+                              (v.pd1 == 0 || v.po1 > v.tmax)
+                            ? v.qo1 * v.qd1
+                            : 0),
+                        v.name == 'پترول'
+                          ? (console.log('tmax = ', v.tmax),
+                            console.log('pd1 = ', v.pd1),
+                            console.log('qd1 = ', v.qd1),
+                            console.log('qo1 = ', v.qo1),
+                            console.log('v = ', v.name))
+                          : null,
+                        num >= 0 ? (color = 'green') : (color = 'red'),
+                        (
+                          <td
+                            data-sort={num}
+                            style={{
+                              color: color,
+                            }}>
+                            {numeral(num)
+                              .format('0a')
+                              .toUpperCase()}
+                          </td>
+                        ))
+                      }
+                      {
+                        (GetMM(v),
+                        (
                           <td
                             data-sort={v.mmY ? v.mmY : 0}
                             style={{
@@ -370,208 +387,49 @@ const CreateTable = data => {
                               {v.mmY ? v.mmY : null}
                             </span>
                           </td>
-                        }
-                        <td style={stylee}>{v.flow}</td>
-                        <td
+                        ))
+                      }
+                      <td style={stylee}>{v.flow}</td>
+                      <td
+                        style={{
+                          padding: '0 0 0 4px',
+                          fontSize: '14px',
+                        }}
+                        data-sort={v.totalVol}>
+                        {numeral(v.totalVol)
+                          .format('0a')
+                          .toUpperCase()}
+                        <p
                           style={{
-                            padding: '0 0 0 4px',
-                            fontSize: '14px',
+                            clear: 'left',
+                            margin: '0',
                           }}
-                          data-sort={v.totalVol}>
-                          {numeral(v.totalVol)
-                            .format('0a')
-                            .toUpperCase()}
-                          <p
+                        />
+                        <span
+                          style={{
+                            fontWeight: 'bold',
+                          }}>
+                          {v.floatVal + '%'}
+                        </span>
+                      </td>
+                      {
+                        (v.d5
+                          ? v.d5 > 0
+                            ? ((dataSort = v.d5), (color = 'green'))
+                            : ((dataSort = v.d5), (color = 'red'))
+                          : ((color = 'red'), (dataSort = 0)),
+                        (
+                          <td
+                            data-sort={dataSort == 'N' ? 0 : dataSort}
                             style={{
-                              clear: 'left',
-                              margin: '0',
-                            }}
-                          />
-                          <span
-                            style={{
+                              padding: 0,
+                              color: color,
+                              fontSize: '14px',
                               fontWeight: 'bold',
                             }}>
-                            {v.floatVal + '%'}
-                          </span>
-                        </td>
-                        {
-                          (v.d5
-                            ? v.d5 > 0
-                              ? ((dataSort = v.d5), (color = 'green'))
-                              : ((dataSort = v.d5), (color = 'red'))
-                            : ((color = 'red'), (dataSort = 0)),
-                          (
-                            <td
-                              data-sort={dataSort == 'N' ? 0 : dataSort}
-                              style={{
-                                padding: 0,
-                                color: color,
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                              }}>
-                              {numeral(v.d5).format() + '%'}
-                              <canvas
-                                id={'v5d' + v.inscode.toString()}
-                                width={CANVAS_WIDTH}
-                                height={CANVAS_HEIGHT}
-                                style={{
-                                  display: 'block',
-                                  maxHeight: '100%',
-                                  margin: 0,
-                                }}
-                              />
-                            </td>
-                          ))
-                        }
-                        {
-                          (v.d10
-                            ? v.d10 > 0
-                              ? ((dataSort = v.d10), (color = 'green'))
-                              : ((dataSort = v.d10), (color = 'red'))
-                            : ((color = 'red'), (dataSort = 0)),
-                          (
-                            <td
-                              data-sort={dataSort == 'N' ? 0 : dataSort}
-                              style={{
-                                padding: 0,
-                                color: color,
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                              }}>
-                              {numeral(v.d10).format() + '%'}
-                              <canvas
-                                id={'v10d' + v.inscode.toString()}
-                                width={CANVAS_WIDTH}
-                                height={CANVAS_HEIGHT}
-                                style={{
-                                  display: 'block',
-                                  maxHeight: '100%',
-                                  margin: 0,
-                                }}
-                              />
-                            </td>
-                          ))
-                        }
-                        {
-                          (v.d30
-                            ? v.d30 > 0
-                              ? ((dataSort = v.d30), (color = 'green'))
-                              : ((dataSort = v.d30), (color = 'red'))
-                            : ((color = 'red'), (dataSort = 0)),
-                          (
-                            <td
-                              data-sort={dataSort == 'N' ? 0 : dataSort}
-                              style={{
-                                padding: 0,
-                                color: color,
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                              }}>
-                              {numeral(v.d30).format() + '%'}
-                              <canvas
-                                id={'v30d' + v.inscode.toString()}
-                                width={CANVAS_WIDTH}
-                                height={CANVAS_HEIGHT}
-                                style={{
-                                  display: 'block',
-                                  maxHeight: '100%',
-                                  margin: 0,
-                                }}
-                              />
-                            </td>
-                          ))
-                        }
-                        {
-                          (v.d60
-                            ? v.d60 > 0
-                              ? ((dataSort = v.d60), (color = 'green'))
-                              : ((dataSort = v.d60), (color = 'red'))
-                            : ((color = 'red'), (dataSort = 0)),
-                          (
-                            <td
-                              data-sort={dataSort == 'N' ? 0 : dataSort}
-                              style={{
-                                padding: 0,
-                                color: color,
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                              }}>
-                              {numeral(v.d60).format() + '%'}
-                              <canvas
-                                id={'v60d' + v.inscode.toString()}
-                                width={CANVAS_WIDTH}
-                                height={CANVAS_HEIGHT}
-                                style={{
-                                  display: 'block',
-                                  maxHeight: '100%',
-                                  margin: 0,
-                                }}
-                              />
-                            </td>
-                          ))
-                        }
-                        {
-                          (v.d360
-                            ? v.d360 > 0
-                              ? ((dataSort = v.d360), (color = 'green'))
-                              : ((dataSort = v.d360), (color = 'red'))
-                            : ((color = 'red'), (dataSort = 0)),
-                          (
-                            <td
-                              data-sort={dataSort == 'N' ? 0 : dataSort}
-                              style={{
-                                padding: 0,
-                                fontSize: '14px',
-                                fontWeight: 'bold',
-                                color: color,
-                              }}>
-                              {numeral(v.d360).format() + '%'}
-                              <canvas
-                                id={'v360d' + v.inscode.toString()}
-                                width={CANVAS_WIDTH}
-                                height={CANVAS_HEIGHT}
-                                style={{
-                                  display: 'block',
-                                  maxHeight: '100%',
-                                  margin: 0,
-                                }}
-                              />
-                            </td>
-                          ))
-                        }
-                        <td
-                          data-sort={v.ct ? v.ct.Buy_N_Volume : 0}
-                          style={{padding: 0}}>
-                          {v.ct
-                            ? numeral(v.ct.Buy_N_Volume)
-                                .format('0a')
-                                .toString()
-                                .toUpperCase()
-                            : null}
-
-                          <canvas
-                            id={'hv' + v.inscode.toString()}
-                            width={CANVAS_WIDTH}
-                            height={CANVAS_HEIGHT}
-                            style={{
-                              display: 'block',
-                              maxHeight: '100%',
-                              margin: 0,
-                            }}
-                          />
-                        </td>
-                        {
-                          <td
-                            data-sort={v.ct ? v.ct.Buy_CountN : 0}
-                            style={{padding: 0}}>
-                            {v.ct
-                              ? numeral(v.ct.Buy_CountN)
-                                  .format('0a')
-                                  .toString()
-                                  .toUpperCase()
-                              : null}
+                            {numeral(v.d5).format() + '%'}
                             <canvas
-                              id={'hn' + v.inscode.toString()}
+                              id={'v5d' + v.inscode.toString()}
                               width={CANVAS_WIDTH}
                               height={CANVAS_HEIGHT}
                               style={{
@@ -581,47 +439,219 @@ const CreateTable = data => {
                               }}
                             />
                           </td>
-                        }
-                        <td>{v.cs}</td>
-                        <td>{v.pClosingHist ? v.pClosingHist.length : null}</td>
-                        <td>
-                          <a
-                            href={
-                              'https://www.sahamyab.com/hashtag/' +
-                              v.name +
-                              '/post'
-                            }>
-                            <img
+                        ))
+                      }
+                      {
+                        (v.d10
+                          ? v.d10 > 0
+                            ? ((dataSort = v.d10), (color = 'green'))
+                            : ((dataSort = v.d10), (color = 'red'))
+                          : ((color = 'red'), (dataSort = 0)),
+                        (
+                          <td
+                            data-sort={dataSort == 'N' ? 0 : dataSort}
+                            style={{
+                              padding: 0,
+                              color: color,
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}>
+                            {numeral(v.d10).format() + '%'}
+                            <canvas
+                              id={'v10d' + v.inscode.toString()}
+                              width={CANVAS_WIDTH}
+                              height={CANVAS_HEIGHT}
                               style={{
                                 display: 'block',
+                                maxHeight: '100%',
+                                margin: 0,
                               }}
-                              width="100%"
-                              height="100%"
-                              src="http://smojmar.github.io/upload/sahamYab.png"
                             />
-                          </a>
-                        </td>
-                        <td>
-                          <a
-                            href={
-                              'http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
-                              v.inscode
-                            }>
-                            <img
+                          </td>
+                        ))
+                      }
+                      {
+                        (v.d30
+                          ? v.d30 > 0
+                            ? ((dataSort = v.d30), (color = 'green'))
+                            : ((dataSort = v.d30), (color = 'red'))
+                          : ((color = 'red'), (dataSort = 0)),
+                        (
+                          <td
+                            data-sort={dataSort == 'N' ? 0 : dataSort}
+                            style={{
+                              padding: 0,
+                              color: color,
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}>
+                            {numeral(v.d30).format() + '%'}
+                            <canvas
+                              id={'v30d' + v.inscode.toString()}
+                              width={CANVAS_WIDTH}
+                              height={CANVAS_HEIGHT}
                               style={{
                                 display: 'block',
+                                maxHeight: '100%',
+                                margin: 0,
                               }}
-                              width="100%"
-                              height="100%"
-                              src="http://smojmar.github.io/upload/tseIcon.jpg"
                             />
-                          </a>
+                          </td>
+                        ))
+                      }
+                      {
+                        (v.d60
+                          ? v.d60 > 0
+                            ? ((dataSort = v.d60), (color = 'green'))
+                            : ((dataSort = v.d60), (color = 'red'))
+                          : ((color = 'red'), (dataSort = 0)),
+                        (
+                          <td
+                            data-sort={dataSort == 'N' ? 0 : dataSort}
+                            style={{
+                              padding: 0,
+                              color: color,
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                            }}>
+                            {numeral(v.d60).format() + '%'}
+                            <canvas
+                              id={'v60d' + v.inscode.toString()}
+                              width={CANVAS_WIDTH}
+                              height={CANVAS_HEIGHT}
+                              style={{
+                                display: 'block',
+                                maxHeight: '100%',
+                                margin: 0,
+                              }}
+                            />
+                          </td>
+                        ))
+                      }
+                      {
+                        (v.d360
+                          ? v.d360 > 0
+                            ? ((dataSort = v.d360), (color = 'green'))
+                            : ((dataSort = v.d360), (color = 'red'))
+                          : ((color = 'red'), (dataSort = 0)),
+                        (
+                          <td
+                            data-sort={dataSort == 'N' ? 0 : dataSort}
+                            style={{
+                              padding: 0,
+                              fontSize: '14px',
+                              fontWeight: 'bold',
+                              color: color,
+                            }}>
+                            {numeral(v.d360).format() + '%'}
+                            <canvas
+                              id={'v360d' + v.inscode.toString()}
+                              width={CANVAS_WIDTH}
+                              height={CANVAS_HEIGHT}
+                              style={{
+                                display: 'block',
+                                maxHeight: '100%',
+                                margin: 0,
+                              }}
+                            />
+                          </td>
+                        ))
+                      }
+                      <td
+                        data-sort={v.Buy_N_Volume ? v.Buy_N_Volume : 0}
+                        style={{padding: 0}}>
+                        {v.ct
+                          ? numeral(v.Buy_N_Volume)
+                              .format('0a')
+                              .toString()
+                              .toUpperCase()
+                          : null}
+
+                        <canvas
+                          id={'hv' + v.inscode.toString()}
+                          width={CANVAS_WIDTH}
+                          height={CANVAS_HEIGHT}
+                          style={{
+                            display: 'block',
+                            maxHeight: '100%',
+                            margin: 0,
+                          }}
+                        />
+                      </td>
+                      {
+                        <td
+                          data-sort={v.Buy_CountN ? v.Buy_CountN : 0}
+                          style={{padding: 0}}>
+                          {v.ct
+                            ? numeral(v.Buy_CountN)
+                                .format('0a')
+                                .toString()
+                                .toUpperCase()
+                            : null}
+                          <canvas
+                            id={'hn' + v.inscode.toString()}
+                            width={CANVAS_WIDTH}
+                            height={CANVAS_HEIGHT}
+                            style={{
+                              display: 'block',
+                              maxHeight: '100%',
+                              margin: 0,
+                            }}
+                          />
                         </td>
-                      </tr>
-                    )
-                  ),
-                ))
-            }
+                      }
+                      <td>
+                        <span
+                          onClick={() => {
+                            //let t = [];
+                            //t.target = [];
+                            //t.target.value = v.cs;
+                            //console.log('t = ', t);
+                            //filterThis.CsSelected(t);
+                          }}>
+                          {v.cs}
+                        </span>
+                      </td>
+                      <td>{v.hist ? v.hist.length : null}</td>
+                      <td>
+                        <a
+                          href={
+                            'https://www.sahamyab.com/hashtag/' +
+                            v.name +
+                            '/post'
+                          }
+                          target="_blank">
+                          <img
+                            style={{
+                              display: 'block',
+                            }}
+                            width="100%"
+                            height="100%"
+                            src="http://filterbourse.ir/upload/sahamYab.png"
+                          />
+                        </a>
+                      </td>
+                      <td>
+                        <a
+                          href={
+                            'http://www.tsetmc.com/loader.aspx?ParTree=151311&i=' +
+                            v.inscode
+                          }
+                          target="_blank">
+                          <img
+                            style={{
+                              display: 'block',
+                            }}
+                            width="100%"
+                            height="100%"
+                            src="http://filterbourse.ir/upload/tseIcon.jpg"
+                          />
+                        </a>
+                      </td>
+                    </tr>
+                  )
+                ),
+              )}
           </tbody>
         </table>
         <br />
@@ -650,6 +680,8 @@ class Table extends React.Component {
       d360: [],
     };
     tableThis = this;
+
+    allRows.forEach(v => GetBazdeh(v));
   }
 
   Plot = (canvasId, data, min, max, op) => {
@@ -757,7 +789,7 @@ class Table extends React.Component {
 
     //5d voloume
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.vHist)
       .forEach((v, i) => {
         let data = v.vHist.filter((v, i) => i < 4).reverse();
@@ -776,10 +808,11 @@ class Table extends React.Component {
 
     //5d price
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 4).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 5);
         data.push(v.pc);
         let canvas = document.getElementById('v5d' + v.inscode);
         this.Plot(
@@ -795,7 +828,7 @@ class Table extends React.Component {
 
     //10d voloume
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.vHist)
       .forEach((v, i) => {
         let data = v.vHist.filter((v, i) => i < 9).reverse();
@@ -814,10 +847,12 @@ class Table extends React.Component {
 
     //10d hist
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 9).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 10);
+
         data.push(v.pc);
         let canvas = document.getElementById('v10d' + v.inscode);
         this.Plot(
@@ -833,7 +868,7 @@ class Table extends React.Component {
 
     //30d volume
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.vHist)
       .forEach((v, i) => {
         let data = v.vHist.filter((v, i) => i < 29).reverse();
@@ -852,10 +887,12 @@ class Table extends React.Component {
 
     //30d price
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 29).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 30);
+
         data.push(v.pc);
         let canvas = document.getElementById('v30d' + v.inscode);
         this.Plot(
@@ -870,7 +907,7 @@ class Table extends React.Component {
       });
 
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.vHist)
       .forEach((v, i) => {
         let data = v.vHist.filter((v, i) => i < 59).reverse();
@@ -888,10 +925,11 @@ class Table extends React.Component {
       });
 
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 59).reverse();
+        let length = v.hist.length;
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 60);
         data.push(v.pc);
         let canvas = document.getElementById('v60d' + v.inscode);
         this.Plot(
@@ -906,7 +944,7 @@ class Table extends React.Component {
       });
 
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.vHist)
       .forEach((v, i) => {
         let data = v.vHist.filter((v, i) => i < 249).reverse();
@@ -924,10 +962,10 @@ class Table extends React.Component {
       });
 
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
-      .filter(v => v.pClosingHist)
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
+      .filter(v => v.hist)
       .forEach((v, i) => {
-        let data = v.pClosingHist.filter((v, i) => i < 249).reverse();
+        let data = v.hist.map(v => v.pl).filter((v, i) => i > length - 250);
         data.push(v.pc);
         let canvas = document.getElementById('v360d' + v.inscode);
         this.Plot(
@@ -943,14 +981,11 @@ class Table extends React.Component {
 
     //hn
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.ctHist)
       .forEach((v, i) => {
-        let data = v.ctHist
-          .map(v1 => v1.split(','))
-          .map(v2 => v2[1])
-          .reverse();
-        data.push(v.ct.Buy_CountN);
+        let data = v.ctHist.map(v2 => v2[1]).reverse();
+        data.push(v.Buy_CountN);
         let canvas = document.getElementById('hn' + v.inscode);
         this.Plot(
           'hn' + v.inscode.toString(),
@@ -965,14 +1000,11 @@ class Table extends React.Component {
 
     //hv
     allRows
-      .filter((v1, i1) => v1.l18.match(/^([^0-9]*)$/))
+      .filter((v1, i1) => v1.l18 && v1.l18.match(/^([^0-9]*)$/))
       .filter(v => v.ctHist)
       .forEach((v, i) => {
-        let data = v.ctHist
-          .map(v1 => v1.split(','))
-          .map(v2 => v2[5])
-          .reverse();
-        data.push(v.ct.Buy_N_Volume);
+        let data = v.ctHist.map(v2 => v2[5]).reverse();
+        data.push(v.Buy_N_Volume);
         let canvas = document.getElementById('hv' + v.inscode);
         this.Plot(
           'hv' + v.inscode.toString(),
@@ -985,6 +1017,8 @@ class Table extends React.Component {
         );
       });
 
+    console.log('Start of datatable = ');
+    console.time('datatable');
     table = $('#table').DataTable({
       order: [[1, 'desc']],
       pageLength: 10,
@@ -1021,6 +1055,7 @@ class Table extends React.Component {
         {name: 'col-email'},
       ],
     });
+    console.timeEnd('datatable');
     //$('#table tbody tr').on('click', function(event) {
     //  let t = $(this).hasClass('row_selected');
     //  $('#table tbody tr').removeClass('row_selected');
@@ -1030,6 +1065,24 @@ class Table extends React.Component {
     //    $(this).addClass('row_selected');
     //  }
     //});
+
+    $('table> tbody> tr> td> div>a').on('mousedown', function(event) {
+      let t = $(this).text();
+      let p = table
+        .column(0, {search:'applied'})
+        .data()
+        .map((v, i) => {
+          iterateList[i] = v.match(/href="\/(.*)" t/)[1].replace(/ /g, '');
+        });
+      console.log("iterateList = ", iterateList);
+      let iterateListIndex = iterateList.findIndex(v => v == t);
+      console.log('iterateListIndex = ', iterateListIndex);
+      localStorage.setItem('iterateList', JSON.stringify(iterateList));
+      localStorage.setItem(
+        'iterateListIndex',
+        JSON.stringify(iterateListIndex),
+      );
+    });
   }
 
   componentWillUnmount() {}
@@ -1055,7 +1108,6 @@ class Table extends React.Component {
   };
 
   render() {
-    console.log('table render')
     this.GetCurRows();
     portfo = LoadPortfo();
 
@@ -1087,5 +1139,84 @@ class Table extends React.Component {
     );
   }
 }
+function GetMM(v) {
+  if (v.hist) {
+    let histData = v.hist.map(v => v.pl).reverse();
 
+    let max = Math.max(...histData.slice(0, 60));
+    v.pc <= max
+      ? (v.mm = numeral(-((max - v.pc) / max) * 100).format())
+      : (v.mm = 0);
+
+    max = Math.max(...histData.slice(0, 250));
+    v.pc <= max
+      ? (v.mmY = numeral(-((max - v.pc) / max) * 100).format())
+      : (v.mmY = 0);
+  } else {
+    v.mm = 0;
+    v.mmY = 0;
+  }
+}
+
+function GetBazdeh(v) {
+  if (v.hist) {
+    let data = v.hist.map(v => v.pl);
+    let len = v.hist.length;
+
+    let n = len - 250;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d360 = val;
+    } else {
+      v.d360 = 'N';
+    }
+
+    n = len - 60;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d60 = val;
+    } else {
+      v.d60 = 'N';
+    }
+
+    n = len - 30;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d30 = val;
+    } else {
+      v.d30 = 'N';
+    }
+
+    n = len - 10 - 1;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d10 = val;
+    } else {
+      v.d10 = 'N';
+    }
+
+    n = len - 5;
+    if (data[n]) {
+      let val = -(((data[n] - v.pc) / data[n]) * 100);
+      if (true) {
+        val = Math.round(val);
+      }
+      v.d5 = val;
+    } else {
+      v.d5 = 'N';
+    }
+  }
+}
 export {Table, curRows, tableThis, table, columns, portfo, CreateTable};
