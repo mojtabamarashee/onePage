@@ -345,7 +345,7 @@ filters.push({
 	func: (settings, data, dataIndex) => {
 		var v = allRows.find(v => v.name == data[0].split('___')[1]);
 		let b1 = Number(v.Buy_N_Volume - v.Sell_N_Volume);
-		if (b1 > 0 && b1 * v.pc > vorodePuleHoghughi * 1e9) {
+		if (b1 > 0 && b1 * v.pc / 10 > vorodePuleHoghughi * 1e9) {
 			return true;
 		} else {
 			return false;
