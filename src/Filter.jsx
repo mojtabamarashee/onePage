@@ -18,7 +18,7 @@ import Badge from '@material-ui/core/Badge';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
-let kafeGheymat, volumeMoreThan, dargir, forushHoghughi, kharidHoghughi;
+let kafeGheymat, volumeMoreThan, dargir, forushHoghughi, kharidHoghughi, kharidKhalesHoghughi;
 let that;
 let watchList;
 
@@ -351,6 +351,29 @@ filters.push({
   },
 });
 
+
+filters.push({
+  exist: 0,
+  name: 'KharidKhalesHoghughi',
+  func: (settings, data, dataIndex) => {
+    var v = allRows.find(v => v.name == data[0].split('___')[1]);
+    if (v.Buy_I_Volume && v.Buy_N_Volume) {
+        let b1 = Number(v.Buy_N_Volume - v.Sell_N_Volume)
+      if ( b1 > 0 &&
+        (b1 / (Number(v.Buy_I_Volume) + Number(v.Buy_N_Volume))) *
+          100 >
+        kharidKhalesHoghughi
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  },
+});
+
+
 filters.push({
   exist: 0,
   name: 'PriceLimit',
@@ -667,6 +690,20 @@ class Filter extends React.Component {
     }
   };
 
+  KharidKhalesHoghughi = e => {
+    kharidKhaleseHoghughi = e.target.value;
+    if (kharidKhaleseHoghughi != 0) {
+      filters.find(v => v.name == 'KharidKhalesHoghughi').exist = 1;
+      $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+      table.draw();
+      this.setState({searchResultNum: table.page.info().recordsDisplay});
+    } else {
+      filters.find(v => v.name == 'KharidKhalesHoghughi').exist = 0;
+      $.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+      table.draw();
+      this.setState({searchResultNum: table.page.info().recordsDisplay});
+    }
+  };
 
   PriceEn = e => {
     if (e.target.checked) {
@@ -1183,6 +1220,34 @@ class Filter extends React.Component {
             {'درصد خرید مربوط یه ححقوقی بوده'}
           </span>
         </div>
+
+        <p style={{clear: 'right'}} />
+        <div style={{float: 'right'}}>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {'بیش از '}
+          </span>
+          <TextField
+            select
+            id="filled-select-currency"
+            inputProps={{
+              style: {
+                height: '5%',
+              },
+            }}
+            style={{margin: '5px'}}
+            onChange={this.KharidKhalesHoghughi}
+            variant="filled">
+            {[0, 40, 50, 60, 70, 80, 90].map((value, i) => (
+              <MenuItem key={value} style={{margin: '5px'}} value={value}>
+                {value.toString()}
+              </MenuItem>
+            ))}
+          </TextField>
+          <span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+            {'درصد خرید خالص مربوط یه ححقوقی بوده'}
+          </span>
+        </div>
+
 
       </div>
     );
