@@ -686,7 +686,7 @@ class Filter extends React.Component {
 
 	VorodePuleHoghughi = e => {
 		vorodePuleHoghughi = e.target.value;
-		if (VorodePuleHoghughi != 0) {
+		if (vorodePuleHoghughi != 0) {
 			filters.find(v => v.name == 'VorodePuleHoghughi').exist = 1;
 			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
 			table.draw();
