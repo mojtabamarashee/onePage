@@ -18,7 +18,7 @@ import Badge from '@material-ui/core/Badge';
 let selectedCs = 'none';
 let priceMinVal, priceMaxVal;
 let filters = [];
-let kafeGheymat, volumeMoreThan, dargir, forushHoghughi, kharidHoghughi, kharidKhalesHoghughi, vorodePuleHoghughi;
+let kafeGheymat, volumeMoreThan, dargir, forushHoghughi, kharidHoghughi, kharidKhalesHoghughi, vorodePuleHoghughi, ekhtelafAzSaghfeSalaneh;
 let that;
 let watchList;
 
@@ -353,6 +353,24 @@ filters.push({
 		return false;
 	},
 });
+
+filters.push({
+	exist: 0,
+	name: 'EkhtelafAzSaghfeSalaneh',
+	func: (settings, data, dataIndex) => {
+		var v = allRows.find(v => v.name == data[0].split('___')[1]);
+        console.log("v = ", v);
+        let eas = (Number(v.peakYear) - v.pl) / Number(v.peakYear) * 100;
+        console.log("eas = ", eas);
+		if (eas > 0 && eas >= ekhtelafAzSaghfeSalaneh && eas < 90) {
+			return true;
+		} else {
+			return false;
+		}
+		return false;
+	},
+});
+
 filters.push({
 	exist: 0,
 	name: 'PriceLimit',
@@ -693,6 +711,22 @@ class Filter extends React.Component {
 			this.setState({searchResultNum: table.page.info().recordsDisplay});
 		} else {
 			filters.find(v => v.name == 'VorodePuleHoghughi').exist = 0;
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+			table.draw();
+			this.setState({searchResultNum: table.page.info().recordsDisplay});
+		}
+	};
+
+	EkhtelafAzSaghfeSalaneh = e => {
+		ekhtelafAzSaghfeSalaneh = e.target.value;
+        console.log("ekhtelafAzSaghfeSalaneh = ", ekhtelafAzSaghfeSalaneh);
+		if (ekhtelafAzSaghfeSalaneh != 0) {
+			filters.find(v => v.name == 'EkhtelafAzSaghfeSalaneh').exist = 1;
+			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
+			table.draw();
+			this.setState({searchResultNum: table.page.info().recordsDisplay});
+		} else {
+			filters.find(v => v.name == 'EkhtelafAzSaghfeSalaneh').exist = 0;
 			$.fn.dataTable.ext.search = filters.filter(v => v.exist).map(v => v.func);
 			table.draw();
 			this.setState({searchResultNum: table.page.info().recordsDisplay});
@@ -1221,7 +1255,7 @@ class Filter extends React.Component {
 						style={{margin: '5px'}}
 						onChange={this.VorodePuleHoghughi}
 						variant="filled">
-						{[1, 5, 10, 20, 30, 40, 50, 70, 100].map((value, i) => (
+						{[0, 1, 5, 10, 20, 30, 40, 50, 70, 100].map((value, i) => (
 							<MenuItem key={value} style={{margin: '5px'}} value={value}>
 								{value.toString()}
 							</MenuItem>
@@ -1231,6 +1265,32 @@ class Filter extends React.Component {
 						{'میلیارد تومان ورود پول حقوقی'}
 					</span>
 				</div>
+
+				<p style={{clear: 'right'}} />
+				<div style={{float: 'right'}}>
+					<span style={{fontFamily: 'Courier New, Courier, monospace'}}>{'بیش از '}</span>
+					<TextField
+						select
+						id="filled-select-currency"
+						inputProps={{
+							style: {
+								height: '5%',
+							},
+						}}
+						style={{margin: '5px'}}
+						onChange={this.EkhtelafAzSaghfeSalaneh}
+						variant="filled">
+						{[0, 5, 10, 20, 30, 40, 50, 60, 70].map((value, i) => (
+							<MenuItem key={value} style={{margin: '5px'}} value={value}>
+								{value.toString()}
+							</MenuItem>
+						))}
+					</TextField>
+					<span style={{fontFamily: 'Courier New, Courier, monospace'}}>
+						{'درصد اختلاف از سقف سالانه'}
+					</span>
+				</div>
+
 			</div>
 		);
 	}
