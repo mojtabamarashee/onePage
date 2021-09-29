@@ -27,7 +27,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "css-loader": "^1.0.0",
-    "datatables.net": "^1.10.20",
+    "datatables.net": "^1.11.3",
     "datatables.net-dt": "^1.10.20",
     "electron": "^6.0.0",
     "electron-packager": "^14.0.3",
