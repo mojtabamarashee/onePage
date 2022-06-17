@@ -29,7 +29,7 @@
     "css-loader": "^1.0.0",
     "datatables.net": "^1.10.20",
     "datatables.net-dt": "^1.10.20",
-    "electron": "^6.0.0",
+    "electron": "^15.5.5",
     "electron-packager": "^14.0.3",
     "eslint": "^6.0.1",
     "eslint-config-standard": "^14.1.0",
